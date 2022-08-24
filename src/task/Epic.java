@@ -2,6 +2,7 @@ package task;
 
 import enums.TaskStatus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -11,7 +12,7 @@ public class Epic extends Task {
     /**
      * Мапа с подзадачами {@link Subtask}
      */
-    final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
     public Epic(String title, String description, int id) {
         super(title, description, id, TaskStatus.NEW);
@@ -20,8 +21,8 @@ public class Epic extends Task {
     /**
      * @return {@link #subtasks}
      */
-    public HashMap<Integer, Subtask> getSubtasks() {
-        return subtasks;
+    public ArrayList<Subtask> getSubtasks() {
+        return new ArrayList<Subtask>(subtasks.values());
     }
 
     /**
@@ -33,8 +34,6 @@ public class Epic extends Task {
         subtask.setParentEpicId(getId());
 
         subtasks.put(subtask.getId(), subtask);
-
-        updateStatus();
     }
 
     /**
@@ -48,8 +47,6 @@ public class Epic extends Task {
             subtask.setParentEpicId(null);
 
             subtasks.remove(id);
-
-            updateStatus();
         }
 
     }
@@ -57,7 +54,7 @@ public class Epic extends Task {
     /**
      * Обновление статуса по состоянию подзадач
      */
-    void updateStatus() {
+    public void updateStatus() {
         int newCount = (int) subtasks.values().stream()
                 .filter(subtask -> subtask.getTaskStatus().equals(TaskStatus.NEW)).count();
         int doneCount = (int) subtasks.values().stream()

@@ -9,19 +9,19 @@ public class Task {
     /**
      * Заголовок задачи
      */
-    private final String title;
+    protected  final String title;
     /**
      * Описание задачи
      */
-    private final String description;
+    protected  final String description;
     /**
      * Уникальный идентификатор задачи
      */
-    private final int id;
+    protected  final int id;
     /**
      * Текущий статус задачи
      */
-    private TaskStatus taskStatus;
+    protected  TaskStatus taskStatus;
 
     public Task(String title, String description, int id, TaskStatus taskStatus) {
         this.title = title;

@@ -6,7 +6,7 @@ import enums.TaskStatus;
  * Класс для подзадач класса {@link Epic}
  */
 public class Subtask extends Task {
-    Integer parentEpicId;
+    private Integer parentEpicId;
 
     public Subtask(String title, String description, int id, TaskStatus taskStatus) {
         super(title, description, id, taskStatus);
