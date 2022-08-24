@@ -171,4 +171,12 @@ public class Manager {
     public ArrayList<Subtask> getEpicSubtasks(Epic epic) {
         return epic.getSubtasks();
     }
+
+    /**
+     * Обновление статуса эпика
+     * (До этого этот метод вызывался в самом эпике при любом действии с мапой)
+     */
+    public void updateEpicStatus(Epic epic) {
+        epic.updateStatus();
+    }
 }
