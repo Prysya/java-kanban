@@ -5,6 +5,7 @@ import task.Epic;
 import task.Subtask;
 import task.Task;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
@@ -38,22 +39,22 @@ public class Manager {
     /**
      * Получение списка {@link #tasks}
      */
-    public static HashMap<Integer, Task> getTasks() {
-        return tasks;
+    public static ArrayList<Task> getTasks() {
+        return new ArrayList<Task>(tasks.values());
     }
 
     /**
      * Получение списка {@link #epics}
      */
-    public static HashMap<Integer, Epic> getEpics() {
-        return epics;
+    public static ArrayList<Epic> getEpics() {
+        return new ArrayList<Epic>(epics.values()) ;
     }
 
     /**
      * Получение списка {@link #subtasks}
      */
-    public static HashMap<Integer, Subtask> getSubtasks() {
-        return subtasks;
+    public static ArrayList<Subtask> getSubtasks() {
+        return new ArrayList<Subtask>(subtasks.values());
     }
 
     /**
@@ -167,7 +168,7 @@ public class Manager {
     /**
      * Получение списка подзадач определенного эпика
      */
-    public HashMap<Integer, Subtask> getEpicSubtasks(Epic epic) {
+    public ArrayList<Subtask> getEpicSubtasks(Epic epic) {
         return epic.getSubtasks();
     }
 }
