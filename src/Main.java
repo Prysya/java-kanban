@@ -1,28 +1,46 @@
-import enums.TaskStatus;
-import manager.Manager;
-import task.Epic;
-import task.Subtask;
-import task.Task;
+import manager.HistoryManager;
+import manager.TaskManager;
+import utils.Managers;
 
 public class Main {
     public static void main(String[] args) {
-        Task task1 = new Task("Задача 1", "Собрать коробки", Manager.generateId(), TaskStatus.NEW);
-        Task task2 = new Task("Задача 2", "Упаковать кошку", Manager.generateId(), TaskStatus.NEW);
+        TaskManager taskManager = Managers.getDefault();
+        HistoryManager historyManager = Managers.getDefaultHistory();
 
-        Epic epic1 = new Epic("Эпик1", "Эпик 1", Manager.generateId());
-        Epic epic2 = new Epic("Эпик2", "Эпик 2", Manager.generateId());
+        for (int i = 1; i < 12; i += 1) {
+            /*
+            * Случайное число где
+            * 1 - Task
+            * 2 - Epic
+            * 3 - Subtask
+            * */
+            int randomNumber = 1 + (int) (Math.random() * 2);
 
-        Subtask subtask1 = new Subtask("Сабтаск1", "Сабтаск1", Manager.generateId(), TaskStatus.DONE);
-        Subtask subtask2 = new Subtask("Сабтаск2", "Сабтаск2", Manager.generateId(), TaskStatus.IN_PROGRESS);
-        Subtask subtask3 = new Subtask("Сабтаск3", "Сабтаск3", Manager.generateId(), TaskStatus.DONE);
+            switch (randomNumber) {
+                case 1:
+                    taskManager.createTask("Задача" + i, "Задача" + i);
+                    break;
+                case 2:
+                    taskManager.createEpic("Эпик" + i, "Эпик" + i);
+                    break;
+                default:
+                    taskManager.createSubtask("Сабтаск" + i, "Сабтаск" + i);
+            }
+        }
 
-        epic1.addSubtask(subtask1);
-        epic1.addSubtask(subtask2);
-        epic2.addSubtask(subtask3);
+        taskManager.getTasks().forEach(task -> {
+            taskManager.getTaskById(task.getId());
+            System.out.println(historyManager.getHistory());
+        });
 
-        System.out.println(task1);
-        System.out.println(task2);
-        System.out.println(epic1);
-        System.out.println(epic2);
+        taskManager.getEpics().forEach(epic -> {
+            taskManager.getEpicById(epic.getId());
+            System.out.println(historyManager.getHistory());
+        });
+
+        taskManager.getSubtasks().forEach(subtask -> {
+            taskManager.getSubtaskById(subtask.getId());
+            System.out.println(historyManager.getHistory());
+        });
     }
 }
