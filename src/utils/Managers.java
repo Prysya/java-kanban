@@ -5,13 +5,13 @@ import manager.InMemoryTaskManager;
 import manager.TaskManager;
 
 public class Managers {
-    static InMemoryTaskManager InMemoryTaskManager = new InMemoryTaskManager();
+    private static final InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
 
     public static TaskManager getDefault() {
-        return InMemoryTaskManager;
+        return inMemoryTaskManager;
     }
 
     public static HistoryManager getDefaultHistory() {
-        return InMemoryTaskManager;
+        return inMemoryTaskManager;
     }
 }
