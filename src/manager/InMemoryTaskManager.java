@@ -12,24 +12,22 @@ public class InMemoryTaskManager extends InMemoryHistoryManager implements TaskM
     /**
      * Хэш мапа {@link Task}
      */
-    final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final static HashMap<Integer, Task> tasks = new HashMap<>();
 
     /**
      * Хэш мапа {@link Epic}
      */
-    final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final static HashMap<Integer, Epic> epics = new HashMap<>();
 
     /**
      * Хэш мапа {@link Subtask}
      */
-    final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final static HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
     /**
      * Уникальный Идентификатор задач
      */
-    int id = 0;
-
-
+    private int id = 0;
 
     /**
      * Метод для генерации {@link #id}
@@ -216,9 +214,8 @@ public class InMemoryTaskManager extends InMemoryHistoryManager implements TaskM
     /**
      * Обновление статуса эпика
      */
+    @Override
     public void updateEpicStatus(Epic epic) {
         epic.updateStatus();
     }
-
-
 }
