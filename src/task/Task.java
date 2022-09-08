@@ -9,11 +9,11 @@ public class Task {
     /**
      * Заголовок задачи
      */
-    protected  final String title;
+    protected final String title;
     /**
      * Описание задачи
      */
-    protected  final String description;
+    protected final String description;
     /**
      * Уникальный идентификатор задачи
      */
@@ -21,16 +21,12 @@ public class Task {
     /**
      * Текущий статус задачи
      */
-    protected  TaskStatus taskStatus;
+    protected TaskStatus taskStatus;
 
     public Task(String title, String description, TaskStatus taskStatus) {
         this.title = title;
         this.description = description;
         this.taskStatus = taskStatus;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     /**
@@ -52,6 +48,10 @@ public class Task {
      */
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**
