@@ -3,7 +3,7 @@ package task;
 import enums.TaskStatus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 /**
  * Класс с листом подзадач {@link Subtask}
@@ -14,41 +14,35 @@ public class Epic extends Task {
      */
     private final List<Integer> subtaskIds = new ArrayList<>();
 
-    public Epic(String title, String description, int id) {
-        super(title, description, id, TaskStatus.NEW);
+    public Epic(String title, String description) {
+        super(title, description, TaskStatus.NEW);
     }
 
     /**
-     * @return {@link #subtasks}
+     * @return лист уникальных идентификаторов {@link #subtaskIds}
      */
-    public ArrayList<Subtask> getSubtasks() {
-        return new ArrayList<Subtask>(subtasks.values());
+    public List<Integer> getSubtaskIds() {
+        return List.copyOf(subtaskIds);
     }
 
     /**
      * Добавление подзадачи в лист подзадач
      *
-     * @param subtask {@link Subtask}
+     * @param id уникальный идентификатор подадачи({@link Subtask#id})
      */
-    public void addSubtask(Subtask subtask) {
-        subtask.setParentEpicId(getId());
-
-        subtasks.put(subtask.getId(), subtask);
+    public void addSubtaskId(int id) {
+        subtaskIds.add(id);
     }
 
     /**
-     * Удаление подзадачи из листа подзадач
+     * Удаление идентификатора подзадачи из {@link #subtaskIds}
      *
-     * @param id - уникальный идентификатор подзадачи
+     * @param id уникальный идентификатор подадачи({@link Subtask#id})
      */
-    public void deleteSubtask(int id) {
-        if (subtasks.containsKey(id)) {
-            Subtask subtask = subtasks.get(id);
-            subtask.setParentEpicId(null);
-
-            subtasks.remove(id);
+    public void deleteSubtaskId(int id) {
+        if (subtaskIds.contains(id)) {
+            subtaskIds.remove(id);
         }
-
     }
 
     /**
@@ -59,17 +53,18 @@ public class Epic extends Task {
     }
 
     /**
+     * @param subtasksList список {@link Subtask}
      * Обновление статуса по состоянию подзадач
      */
-    public void updateStatus() {
-        int newCount = (int) subtasks.values().stream()
+    public void updateStatus(List<Subtask> subtasksList) {
+        int newCount = (int) subtasksList.stream()
                 .filter(subtask -> subtask.getTaskStatus().equals(TaskStatus.NEW)).count();
-        int doneCount = (int) subtasks.values().stream()
+        int doneCount = (int) subtasksList.stream()
                 .filter(subtask -> subtask.getTaskStatus().equals(TaskStatus.DONE)).count();
 
-        if (newCount == subtasks.size()) {
+        if (newCount == subtaskIds.size()) {
             setTaskStatus(TaskStatus.NEW);
-        } else if (doneCount == subtasks.size()) {
+        } else if (doneCount == subtaskIds.size()) {
             setTaskStatus(TaskStatus.DONE);
         } else {
             setTaskStatus(TaskStatus.IN_PROGRESS);
@@ -91,7 +86,7 @@ public class Epic extends Task {
                 ", description='" + super.getDescription() + '\'' +
                 ", id=" + super.getId() +
                 ", taskStatus=" + super.getTaskStatus() +
-                ", subtasks=" + subtasks +
+                ", subtasks=" + subtaskIds +
                 '}';
     }
 }
