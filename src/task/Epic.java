@@ -58,9 +58,9 @@ public class Epic extends Task {
      */
     public void updateStatus(List<Subtask> subtasksList) {
         int newCount = (int) subtasksList.stream()
-                .filter(subtask -> subtask.getTaskStatus().equals(TaskStatus.NEW)).count();
+                .filter(subtask -> subtask != null && subtask.getTaskStatus().equals(TaskStatus.NEW)).count();
         int doneCount = (int) subtasksList.stream()
-                .filter(subtask -> subtask.getTaskStatus().equals(TaskStatus.DONE)).count();
+                .filter(subtask -> subtask != null && subtask.getTaskStatus().equals(TaskStatus.DONE)).count();
 
         if (newCount == subtaskIds.size()) {
             setTaskStatus(TaskStatus.NEW);
