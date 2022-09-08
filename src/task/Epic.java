@@ -12,7 +12,7 @@ public class Epic extends Task {
     /**
      * Мапа с подзадачами {@link Subtask}
      */
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final List<Integer> subtaskIds = new ArrayList<>();
 
     public Epic(String title, String description, int id) {
         super(title, description, id, TaskStatus.NEW);
@@ -49,6 +49,13 @@ public class Epic extends Task {
             subtasks.remove(id);
         }
 
+    }
+
+    /**
+     * Удаление всех идентификаторов подзадач подзадачи из {@link #subtaskIds}
+     */
+    public void deleteAllSubtaskIds() {
+        subtaskIds.clear();
     }
 
     /**
