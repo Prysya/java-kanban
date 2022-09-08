@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
+    private final static int HISTORY_MAX_SIZE = 10;
     /**
      * Лист с историей всех задач({@link Task}, {@link Epic}, {@link Subtask})
      */
@@ -33,8 +34,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     /**
      * Проверка на величину листа {@link #history} и удаление первого элемента
      */
-    static void updateHistorySize() {
-        if (history.size() > 10) {
+    private void updateHistorySize() {
+        if (history.size() > HISTORY_MAX_SIZE) {
             history.remove(0);
         }
     }
