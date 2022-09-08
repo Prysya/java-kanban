@@ -6,17 +6,21 @@ import enums.TaskStatus;
  * Класс для подзадач класса {@link Epic}
  */
 public class Subtask extends Task {
-    private Integer parentEpicId;
+    /**
+     * Идентификатор эпика родителя
+     */
+    private final Integer parentEpicId;
 
-    public Subtask(String title, String description, int id, TaskStatus taskStatus) {
-        super(title, description, id, taskStatus);
+    public Subtask(String title, String description, TaskStatus taskStatus, int parentEpicId) {
+        super(title, description, taskStatus);
+        this.parentEpicId = parentEpicId;
     }
 
     /**
-     * @param parentEpicId идентификатор эпика родителя
+     * @return {@link #parentEpicId}
      */
-    public void setParentEpicId(Integer parentEpicId) {
-        this.parentEpicId = parentEpicId;
+    public Integer getParentEpicId() {
+        return parentEpicId;
     }
 
     @Override
