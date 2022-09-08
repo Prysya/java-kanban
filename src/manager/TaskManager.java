@@ -43,9 +43,9 @@ public interface TaskManager {
 
     void deleteEpic(int id);
 
-    public void deleteSubtask(int id);
+    void deleteSubtask(int id);
 
-    public List<Integer> getEpicSubtasks(Epic epic);
+    List<Integer> getEpicSubtasks(Epic epic);
 
-    public void updateEpicStatus(Epic epic);
+    void updateEpicStatus(Epic epic);
 }

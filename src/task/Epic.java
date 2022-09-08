@@ -54,7 +54,7 @@ public class Epic extends Task {
 
     /**
      * @param subtasksList список {@link Subtask}
-     * Обновление статуса по состоянию подзадач
+     *                     Обновление статуса по состоянию подзадач
      */
     public void updateStatus(List<Subtask> subtasksList) {
         int newCount = (int) subtasksList.stream()
@@ -70,6 +70,7 @@ public class Epic extends Task {
             setTaskStatus(TaskStatus.IN_PROGRESS);
         }
     }
+
     /**
      * Если метод вызывается без параметров то сбрасывает статус задач
      */

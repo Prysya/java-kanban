@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     /**
@@ -180,8 +179,6 @@ public class InMemoryTaskManager implements TaskManager {
             subtasks.put(id, subtask);
 
             updateEpicStatus(epic);
-
-            subtasks.put(id, subtask);
         }
     }
 
@@ -264,7 +261,13 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void updateEpicStatus(Epic epic) {
-        epic.updateStatus(epic.getSubtaskIds().stream().map(subtasks::get).collect(Collectors.toList()));
+        List<Subtask> subtaskList = new ArrayList<>();
+
+        for (int subtaskId : epic.getSubtaskIds()) {
+            subtaskList.add(subtasks.get(subtaskId));
+        }
+
+        epic.updateStatus(subtaskList);
     }
 
     /**
