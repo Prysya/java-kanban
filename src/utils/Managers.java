@@ -1,19 +1,17 @@
 package utils;
 
-import manager.HistoryManager;
 import manager.InMemoryHistoryManager;
 import manager.InMemoryTaskManager;
-import manager.TaskManager;
 
 public class Managers {
     private Managers() {
     }
 
-    public static TaskManager getDefault() {
+    public static InMemoryTaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 
-    public static HistoryManager getDefaultHistory() {
+    public static InMemoryHistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }
 }
