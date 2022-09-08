@@ -15,11 +15,11 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final List<Task> history = new LinkedList<>();
 
     /**
-     * Получение списка последних 10 просмотренных {@link #history}
+     * Получение списка последних просмотренных {@link #history}
      */
     @Override
     public List<Task> getHistory() {
-        return history;
+        return List.copyOf(history);
     }
 
     /**
