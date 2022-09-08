@@ -12,7 +12,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     /**
      * Лист с историей всех задач({@link Task}, {@link Epic}, {@link Subtask})
      */
-    private static final List<Task> history = new LinkedList<>();
+    private final List<Task> history = new LinkedList<>();
 
     /**
      * Получение списка последних 10 просмотренных {@link #history}
