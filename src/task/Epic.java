@@ -75,6 +75,14 @@ public class Epic extends Task {
             setTaskStatus(TaskStatus.IN_PROGRESS);
         }
     }
+    /**
+     * Если метод вызывается без параметров то сбрасывает статус задач
+     */
+    public void updateStatus() {
+        if (subtaskIds.size() == 0) {
+            setTaskStatus(TaskStatus.NEW);
+        }
+    }
 
     @Override
     public String toString() {
