@@ -17,17 +17,20 @@ public class Task {
     /**
      * Уникальный идентификатор задачи
      */
-    protected  final int id;
+    protected int id;
     /**
      * Текущий статус задачи
      */
     protected  TaskStatus taskStatus;
 
-    public Task(String title, String description, int id, TaskStatus taskStatus) {
+    public Task(String title, String description, TaskStatus taskStatus) {
         this.title = title;
         this.description = description;
-        this.id = id;
         this.taskStatus = taskStatus;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**
