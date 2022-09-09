@@ -4,6 +4,8 @@ import enums.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Класс с листом подзадач {@link Subtask}
@@ -19,10 +21,10 @@ public class Epic extends Task {
     }
 
     /**
-     * @return лист уникальных идентификаторов {@link #subtaskIds}
+     * @return лист {@link Subtask}
      */
-    public List<Integer> getSubtaskIds() {
-        return List.copyOf(subtaskIds);
+    public List<Subtask> getSubtasks(Map<Integer, Subtask> subtasks) {
+        return subtaskIds.stream().map(subtasks::get).collect(Collectors.toList());
     }
 
     /**
@@ -39,10 +41,8 @@ public class Epic extends Task {
      *
      * @param id уникальный идентификатор подадачи({@link Subtask#id})
      */
-    public void deleteSubtaskId(int id) {
-        if (subtaskIds.contains(id)) {
+    public void deleteSubtaskId(Integer id) {
             subtaskIds.remove(id);
-        }
     }
 
     /**
@@ -75,7 +75,7 @@ public class Epic extends Task {
      * Если метод вызывается без параметров то сбрасывает статус задач
      */
     public void updateStatus() {
-        if (subtaskIds.size() == 0) {
+        if (subtaskIds.isEmpty()) {
             setTaskStatus(TaskStatus.NEW);
         }
     }
