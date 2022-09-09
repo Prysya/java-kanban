@@ -58,7 +58,7 @@ public class InMemoryTaskManager implements TaskManager {
      * Получение списка {@link #epics}
      */
     public List<Epic> getEpics() {
-        return new ArrayList<Epic>(epics.values());
+        return new ArrayList<>(epics.values());
     }
 
     /**
@@ -66,7 +66,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public List<Subtask> getSubtasks() {
-        return new ArrayList<Subtask>(subtasks.values());
+        return new ArrayList<>(subtasks.values());
     }
 
     /**
@@ -203,7 +203,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void updateSubtask(Subtask subtask) {
-        Epic epic = getEpicById(subtask.getParentEpicId());
+        Epic epic = epics.get(subtask.getParentEpicId());
 
         if (epic != null) {
             subtasks.put(subtask.getId(), subtask);
@@ -225,11 +225,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpic(int id) {
         if (epics.containsKey(id)) {
-            Epic epic = epics.get(id);
+            Epic epic = epics.remove(id);
 
-            epic.getSubtaskIds().forEach(subtasks::remove);
-
-            epics.remove(id);
+            epic.getSubtasks(subtasks).forEach(subtask -> subtasks.remove(subtask.getId()));
         }
     }
 
@@ -252,8 +250,8 @@ public class InMemoryTaskManager implements TaskManager {
      * Получение листа уникальных идентификаторов {@link Subtask} определенного {@link Epic}
      */
     @Override
-    public List<Integer> getEpicSubtasks(Epic epic) {
-        return epic.getSubtaskIds();
+    public List<Subtask> getEpicSubtasks(Epic epic ) {
+        return epic.getSubtasks(subtasks);
     }
 
     /**
@@ -261,13 +259,7 @@ public class InMemoryTaskManager implements TaskManager {
      */
     @Override
     public void updateEpicStatus(Epic epic) {
-        List<Subtask> subtaskList = new ArrayList<>();
-
-        for (int subtaskId : epic.getSubtaskIds()) {
-            subtaskList.add(subtasks.get(subtaskId));
-        }
-
-        epic.updateStatus(subtaskList);
+        epic.updateStatus(epic.getSubtasks(subtasks));
     }
 
     /**
