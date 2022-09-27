@@ -42,7 +42,7 @@ public class Epic extends Task {
      * @param id уникальный идентификатор подадачи({@link Subtask#id})
      */
     public void deleteSubtaskId(Integer id) {
-            subtaskIds.remove(id);
+        subtaskIds.remove(id);
     }
 
     /**

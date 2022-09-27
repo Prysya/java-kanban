@@ -35,7 +35,7 @@ public class CustomTaskLinkedList {
         }
 
         if (oldTail != null) {
-            oldTail.next = newNode;
+            oldTail.setNext(newNode);
         }
 
         hashTable.put(task.getId(), newNode);
@@ -51,9 +51,9 @@ public class CustomTaskLinkedList {
             Node<Task> currentNode = head;
 
             while (currentNode != null) {
-                tasks.add(currentNode.data);
+                tasks.add(currentNode.getData());
 
-                currentNode = currentNode.next;
+                currentNode = currentNode.getNext();
             }
         }
 
@@ -62,25 +62,25 @@ public class CustomTaskLinkedList {
 
     /**
      * @param node {@link Node}
-     * Удаляет ноду из списка
+     *             Удаляет ноду из списка
      */
     public void removeNode(Node<Task> node) {
-        hashTable.remove(node.data.getId());
+        hashTable.remove(node.getData().getId());
 
         if (head == node) {
-            head = node.next;
+            head = node.getNext();
         }
 
         if (tail == node) {
-            tail = node.prev;
+            tail = node.getPrev();
         }
 
-        if (node.next != null) {
-            node.next.prev = node.prev;
+        if (node.getNext() != null) {
+            node.getNext().setPrev(node.getPrev());
         }
 
-        if (node.prev != null) {
-            node.prev.next = node.next;
+        if (node.getPrev() != null) {
+            node.getPrev().setNext(node.getNext());
         }
     }
 
