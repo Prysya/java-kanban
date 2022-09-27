@@ -1,25 +1,25 @@
 package manager;
 
+import lib.CustomTaskLinkedList;
+import lib.Node;
 import task.Epic;
 import task.Subtask;
 import task.Task;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final static int HISTORY_MAX_SIZE = 10;
     /**
      * Лист с историей всех задач({@link Task}, {@link Epic}, {@link Subtask})
      */
-    private final List<Task> history = new LinkedList<>();
+    private final CustomTaskLinkedList history = new CustomTaskLinkedList();
 
     /**
      * Получение списка последних просмотренных {@link #history}
      */
     @Override
     public List<Task> getHistory() {
-        return List.copyOf(history);
+        return history.getTasks();
     }
 
     /**
@@ -27,16 +27,22 @@ public class InMemoryHistoryManager implements HistoryManager {
      */
     @Override
     public void add(Task task) {
-        history.add(task);
-        updateHistorySize();
+        remove(task.getId());
+
+        history.linkLast(task);
     }
 
     /**
-     * Проверка на величину листа {@link #history} и удаление первого элемента
+     * Удаление {@link Task} из {@link #history}
+     * @param id уникальный идентификатор задачи
      */
-    private void updateHistorySize() {
-        if (history.size() > HISTORY_MAX_SIZE) {
-            history.remove(0);
+    @Override
+    public void remove(int id) {
+        Node<Task> node = history.get(id);
+
+        if (node != null) {
+            history.removeNode(node);
         }
     }
+
 }
