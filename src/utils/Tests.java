@@ -1,19 +1,20 @@
 package utils;
 
 import enums.TaskStatus;
-import manager.InMemoryTaskManager;
+import manager.FileBackedTasksManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
 
+import java.io.File;
 import java.util.List;
 
-public class Tests {
+public final class Tests {
     private Tests() {
     }
 
     public static void generateTests() {
-        InMemoryTaskManager taskManager = Managers.getDefault();
+        FileBackedTasksManager taskManager = Managers.getDefaultFileBacked();
 
         taskManager.createTask(new Task("Таск 1", "Таск 1", TaskStatus.NEW));
         taskManager.createTask(new Task("Таск 2", "Таск 2", TaskStatus.NEW));
@@ -31,24 +32,18 @@ public class Tests {
         List<Epic> epics = taskManager.getEpics();
         List<Subtask> subtasks = taskManager.getSubtasks();
 
-        tasks.forEach(task -> {
-            taskManager.getTaskById(task.getId());
-        });
+        tasks.forEach(task -> taskManager.getTaskById(task.getId()));
+        epics.forEach(epic -> taskManager.getEpicById(epic.getId()));
+        subtasks.forEach(subtask -> taskManager.getSubtaskById(subtask.getId()));
 
-        epics.forEach(epic -> {
-            taskManager.getEpicById(epic.getId());
-        });
-
-        subtasks.forEach(subtask -> {
-            taskManager.getSubtaskById(subtask.getId());
-        });
-
-        System.out.println(taskManager.getHistory());
         taskManager.getTaskById(1);
-        System.out.println(taskManager.getHistory());
-        taskManager.deleteTask(2);
-        System.out.println(taskManager.getHistory());
-        taskManager.deleteEpic(3);
-        System.out.println(taskManager.getHistory());
+
+        FileBackedTasksManager fileBackedTasksManager =
+                FileBackedTasksManager.loadFromFile(new File("history.csv"));
+
+        System.out.println(fileBackedTasksManager.getTasks());
+        System.out.println(fileBackedTasksManager.getEpics());
+        System.out.println(fileBackedTasksManager.getSubtasks());
+        System.out.println(fileBackedTasksManager.getHistory());
     }
 }
