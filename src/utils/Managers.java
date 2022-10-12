@@ -1,9 +1,12 @@
 package utils;
 
+import manager.FileBackedTasksManager;
 import manager.InMemoryHistoryManager;
 import manager.InMemoryTaskManager;
 
-public class Managers {
+import java.io.File;
+
+public final class Managers {
     private Managers() {
     }
 
@@ -13,5 +16,9 @@ public class Managers {
 
     public static InMemoryHistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
+    }
+
+    public static FileBackedTasksManager getDefaultFileBacked() {
+        return new FileBackedTasksManager();
     }
 }
