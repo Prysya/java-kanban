@@ -7,7 +7,7 @@ public enum TaskStatus {
 
     private final String status;
 
-    TaskStatus(String status) {
+    TaskStatus(final String status) {
         this.status = status;
     }
 
@@ -17,8 +17,17 @@ public enum TaskStatus {
 
     @Override
     public String toString() {
-        return "TaskStatus{" +
-                "status='" + status + '\'' +
-                '}';
+        return "TaskStatus{"
+                + "status='" + status + '\''
+                + '}';
+    }
+
+    public static TaskStatus fromString(final String text) {
+        for (TaskStatus taskStatus : TaskStatus.values()) {
+            if (taskStatus.status.equalsIgnoreCase(text)) {
+                return taskStatus;
+            }
+        }
+        return null;
     }
 }
