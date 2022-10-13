@@ -215,4 +215,19 @@ public class InMemoryTaskManager implements TaskManager {
     private void add(Task task) {
         inMemoryHistoryManager.add(task);
     }
+
+    @Override
+    public List<Subtask> getEpicSubtasks(Epic epic) {
+        List<Subtask> epicSubtasksList = new ArrayList<>();
+
+        if (epic == null) return epicSubtasksList;
+
+        for (int id : epic.getSubtaskIds()) {
+            if (subtasks.containsKey(id)) {
+                epicSubtasksList.add(subtasks.get(id));
+            }
+        }
+
+        return epicSubtasksList;
+    }
 }

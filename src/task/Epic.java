@@ -30,15 +30,6 @@ public class Epic extends Task {
     }
 
     /**
-     * @param subtasks мапа где ключ уникальный идентификатор,
-     *                 а значение {@link Subtask}.
-     * @return лист {@link Subtask}
-     */
-    public List<Subtask> getSubtasks(final Map<Integer, Subtask> subtasks) {
-        return subtaskIds.stream().map(subtasks::get).collect(Collectors.toList());
-    }
-
-    /**
      * Добавление подзадачи в лист подзадач.
      *
      * @param id уникальный идентификатор подадачи({@link Subtask#id})
