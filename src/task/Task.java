@@ -8,25 +8,21 @@ import enums.TaskType;
  */
 public class Task {
     /**
-     * Количество параметров в csv строке.
-     */
-    private static final int CSV_PARAMS_COUNT = 6;
-    /**
      * Тип таска.
      */
     private static final TaskType TASK_TYPE = TaskType.TASK;
     /**
-     * Заголовок задачи.
-     */
-    protected final String title;
-    /**
-     * Описание задачи.
-     */
-    protected final String description;
-    /**
      * Уникальный идентификатор задачи.
      */
     protected int id;
+    /**
+     * Заголовок задачи.
+     */
+    protected String title;
+    /**
+     * Описание задачи.
+     */
+    protected String description;
     /**
      * Текущий статус задачи.
      */
@@ -34,11 +30,12 @@ public class Task {
 
     /**
      * Конструктор класса {@link Task}.
-     * @param title заголовок таска
+     *
+     * @param title       заголовок таска
      * @param description описание таска
-     * @param taskStatus статус таска
-     * */
-    public Task(final String title, final String description, final TaskStatus taskStatus) {
+     * @param taskStatus  статус таска
+     */
+    public Task(String title, String description, TaskStatus taskStatus) {
         this.title = title;
         this.description = description;
         this.taskStatus = taskStatus;
@@ -67,9 +64,10 @@ public class Task {
 
     /**
      * Назначение нового {@link #id}.
+     *
      * @param id {@link #id}
-     * */
-    public void setId(final int id) {
+     */
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -83,13 +81,10 @@ public class Task {
     /**
      * @param taskStatus {@link #taskStatus}
      */
-    protected void setTaskStatus(final TaskStatus taskStatus) {
+    protected void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return getId() + ","

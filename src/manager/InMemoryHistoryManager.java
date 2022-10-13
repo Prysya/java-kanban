@@ -14,17 +14,11 @@ public class InMemoryHistoryManager implements HistoryManager {
      */
     private final CustomTaskLinkedList history = new CustomTaskLinkedList();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Task> getHistory() {
         return history.getTasks();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void add(final Task task) {
         remove(task.getId());
@@ -32,11 +26,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         history.linkLast(task);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void remove(final int id) {
+    public void remove(int id) {
         Node<Task> node = history.get(id);
 
         if (node != null) {

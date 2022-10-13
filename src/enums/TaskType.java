@@ -11,6 +11,15 @@ public enum TaskType {
         this.type = status;
     }
 
+    public static TaskType fromString(final String text) {
+        for (TaskType taskType : TaskType.values()) {
+            if (taskType.type.equalsIgnoreCase(text)) {
+                return taskType;
+            }
+        }
+        return null;
+    }
+
     public String getStatus() {
         return type;
     }
@@ -20,14 +29,5 @@ public enum TaskType {
         return "TaskType{"
                 + "type='" + type + '\''
                 + '}';
-    }
-
-    public static TaskType fromString(final String text) {
-        for (TaskType taskType : TaskType.values()) {
-            if (taskType.type.equalsIgnoreCase(text)) {
-                return taskType;
-            }
-        }
-        return null;
     }
 }

@@ -11,6 +11,15 @@ public enum TaskStatus {
         this.status = status;
     }
 
+    public static TaskStatus fromString(final String text) {
+        for (TaskStatus taskStatus : TaskStatus.values()) {
+            if (taskStatus.status.equalsIgnoreCase(text)) {
+                return taskStatus;
+            }
+        }
+        return null;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -20,14 +29,5 @@ public enum TaskStatus {
         return "TaskStatus{"
                 + "status='" + status + '\''
                 + '}';
-    }
-
-    public static TaskStatus fromString(final String text) {
-        for (TaskStatus taskStatus : TaskStatus.values()) {
-            if (taskStatus.status.equalsIgnoreCase(text)) {
-                return taskStatus;
-            }
-        }
-        return null;
     }
 }

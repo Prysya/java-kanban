@@ -7,6 +7,7 @@ import java.util.List;
 public interface HistoryManager {
     /**
      * Получение списка последних просмотренных задач.
+     *
      * @return список задач
      */
     List<Task> getHistory();
@@ -20,6 +21,7 @@ public interface HistoryManager {
 
     /**
      * Удаление {@link Task} из истории задач.
+     *
      * @param id уникальный идентификатор задачи
      */
     void remove(int id);

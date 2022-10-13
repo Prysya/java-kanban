@@ -61,6 +61,8 @@ public class CustomTaskLinkedList {
     }
 
     /**
+     * Удаляет ноду из списка.
+     *
      * @param node {@link Node}
      *             Удаляет ноду из списка
      */
