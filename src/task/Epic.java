@@ -5,32 +5,27 @@ import enums.TaskType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Класс с листом подзадач {@link Subtask}.
  */
 public class Epic extends Task {
     /**
-     * Количество параметров в csv строке.
-     */
-    private static final int CSV_PARAMS_COUNT = 6;
-    /**
      * Тип таска.
      */
     private static final TaskType TASK_TYPE = TaskType.EPIC;
     /**
-     * Мапа с подзадачами {@link Subtask}.
+     * Список с подзадачами {@link Subtask}.
      */
     private final List<Integer> subtaskIds = new ArrayList<>();
 
     /**
      * Конструктор класса {@link Epic}.
-     * @param title заголовок эпика
+     *
+     * @param title       заголовок эпика
      * @param description описание эпика
-     * */
-    public Epic(final String title, final String description) {
+     */
+    public Epic(String title, String description) {
         super(title, description, TaskStatus.NEW);
     }
 
@@ -48,7 +43,7 @@ public class Epic extends Task {
      *
      * @param id уникальный идентификатор подадачи({@link Subtask#id})
      */
-    public void addSubtaskId(final int id) {
+    public void addSubtaskId(int id) {
         subtaskIds.add(id);
     }
 
@@ -57,7 +52,7 @@ public class Epic extends Task {
      *
      * @param id уникальный идентификатор подадачи({@link Subtask#id})
      */
-    public void deleteSubtaskId(final int id) {
+    public void deleteSubtaskId(int id) {
         subtaskIds.remove(id);
     }
 
@@ -72,7 +67,7 @@ public class Epic extends Task {
      * @param subtasksList список {@link Subtask}
      *                     Обновление статуса по состоянию подзадач.
      */
-    public void updateStatus(final List<Subtask> subtasksList) {
+    public void updateStatus(List<Subtask> subtasksList) {
         int newCount = (int) subtasksList.stream()
                 .filter(subtask ->
                         subtask != null && subtask.getTaskStatus()
@@ -99,9 +94,6 @@ public class Epic extends Task {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return getId() + ","
@@ -111,29 +103,7 @@ public class Epic extends Task {
                 + getDescription() + ",";
     }
 
-    /**
-     * Получение {@link Task} из строки.
-     * @param value строка в csv формате
-     * @return {@link Task}
-     */
-    public static Epic fromString(final String value) {
-        String[] values = value.split(",");
-
-        final int idIndex = 0;
-        final int titleIndex = 2;
-        final int descriptionIndex = 4;
-
-        // -1 потому что у эпика нет данных в колоке epic
-        if (values.length < CSV_PARAMS_COUNT - 1) {
-            return null;
-        }
-
-        Epic epic = new Epic(
-                values[titleIndex],
-                values[descriptionIndex]
-        );
-        epic.setId(Integer.parseInt(values[idIndex]));
-
-        return epic;
+    public List<Integer> getSubtaskIds() {
+        return new ArrayList<>(subtaskIds);
     }
 }

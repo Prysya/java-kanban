@@ -98,32 +98,4 @@ public class Task {
                 + getTaskStatus().getStatus() + ","
                 + getDescription() + ",";
     }
-
-    /**
-     * Получение {@link Task} из строки.
-     * @param value строка в csv формате
-     * @return {@link Task}
-     */
-    public static Task fromString(final String value) {
-        String[] values = value.split(",");
-
-        final int idIndex = 0;
-        final int titleIndex = 2;
-        final int taskStatusIndex = 3;
-        final int descriptionIndex = 4;
-
-        // -1 потому что у таска нет данных в колоке epic
-        if (values.length < CSV_PARAMS_COUNT - 1) {
-            return null;
-        }
-
-        Task task = new Task(
-                values[titleIndex],
-                values[descriptionIndex],
-                TaskStatus.fromString(values[taskStatusIndex])
-        );
-        task.setId(Integer.parseInt(values[idIndex]));
-
-        return task;
-    }
 }

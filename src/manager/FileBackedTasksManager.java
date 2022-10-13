@@ -128,6 +128,80 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     /**
+     * Получение {@link Epic} из строки.
+     *
+     * @param value строка в csv формате
+     * @return {@link Epic}
+     */
+    public static Epic epicFromString(String value) {
+        String[] values = value.split(",");
+
+        final int idIndex = 0;
+        final int titleIndex = 2;
+        final int descriptionIndex = 4;
+
+        // -1 потому что у эпика нет данных в колоке epic
+        if (values.length < CSV_PARAMS_COUNT - 1) {
+            return null;
+        }
+
+        Epic epic = new Epic(values[titleIndex], values[descriptionIndex]);
+        epic.setId(Integer.parseInt(values[idIndex]));
+
+        return epic;
+    }
+
+    /**
+     * Получение {@link Subtask} из строки.
+     *
+     * @param value строка в csv формате
+     * @return {@link Subtask}
+     */
+    public static Subtask subtaskFromString(String value) {
+        String[] values = value.split(",");
+
+        final int idIndex = 0;
+        final int titleIndex = 2;
+        final int subtaskStatusIndex = 3;
+        final int descriptionIndex = 4;
+        final int parentEpicIdIndex = 5;
+
+        if (values.length < CSV_PARAMS_COUNT) {
+            return null;
+        }
+
+        Subtask subtask = new Subtask(values[titleIndex], values[descriptionIndex], TaskStatus.fromString(values[subtaskStatusIndex]), Integer.parseInt(values[parentEpicIdIndex]));
+        subtask.setId(Integer.parseInt(values[idIndex]));
+
+        return subtask;
+    }
+
+    /**
+     * Получение {@link Task} из строки.
+     *
+     * @param value строка в csv формате
+     * @return {@link Task}
+     */
+    public static Task taskFromString(String value) {
+        String[] values = value.split(",");
+
+        final int idIndex = 0;
+        final int titleIndex = 2;
+        final int taskStatusIndex = 3;
+        final int descriptionIndex = 4;
+
+        // -1 потому что у таска нет данных в колоке epic
+        if (values.length < CSV_PARAMS_COUNT - 1) {
+            return null;
+        }
+
+        Task task = new Task(values[titleIndex], values[descriptionIndex], TaskStatus.fromString(values[taskStatusIndex]));
+        task.setId(Integer.parseInt(values[idIndex]));
+
+        return task;
+    }
+
+    /**
      * Метод для сохранения текущей истории в файл.
      */
     void save() {
