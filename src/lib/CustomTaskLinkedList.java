@@ -26,6 +26,8 @@ public class CustomTaskLinkedList {
      *             Добавление элемента в конец списка
      */
     public void linkLast(Task task) {
+        if (task == null) return;
+
         final Node<Task> oldTail = tail;
         final Node<Task> newNode = new Node<>(oldTail, task, null);
 
@@ -64,9 +66,10 @@ public class CustomTaskLinkedList {
      * Удаляет ноду из списка.
      *
      * @param node {@link Node}
-     *             Удаляет ноду из списка
      */
     public void removeNode(Node<Task> node) {
+        if (node == null) return;
+
         hashTable.remove(node.getData().getId());
 
         if (head == node) {
