@@ -17,7 +17,7 @@ public class Epic extends Task {
     /**
      * Список с подзадачами {@link Subtask}.
      */
-    private final List<Integer> subtaskIds = new ArrayList<>();
+    private List<Integer> subtaskIds = new ArrayList<>();
 
     /**
      * Конструктор класса {@link Epic}.
@@ -27,62 +27,6 @@ public class Epic extends Task {
      */
     public Epic(String title, String description) {
         super(title, description, TaskStatus.NEW);
-    }
-
-    /**
-     * Добавление подзадачи в лист подзадач.
-     *
-     * @param id уникальный идентификатор подадачи({@link Subtask#id})
-     */
-    public void addSubtaskId(int id) {
-        subtaskIds.add(id);
-    }
-
-    /**
-     * Удаление идентификатора подзадачи из {@link #subtaskIds}.
-     *
-     * @param id уникальный идентификатор подадачи({@link Subtask#id})
-     */
-    public void deleteSubtaskId(int id) {
-        subtaskIds.remove(id);
-    }
-
-    /**
-     * Удаление всех идентификаторов подзадач подзадачи из {@link #subtaskIds}.
-     */
-    public void deleteAllSubtaskIds() {
-        subtaskIds.clear();
-    }
-
-    /**
-     * @param subtasksList список {@link Subtask}
-     *                     Обновление статуса по состоянию подзадач.
-     */
-    public void updateStatus(List<Subtask> subtasksList) {
-        int newCount = (int) subtasksList.stream()
-                .filter(subtask ->
-                        subtask != null && subtask.getTaskStatus()
-                                .equals(TaskStatus.NEW)).count();
-        int doneCount = (int) subtasksList.stream()
-                .filter(subtask -> subtask != null && subtask.getTaskStatus()
-                        .equals(TaskStatus.DONE)).count();
-
-        if (newCount == subtaskIds.size()) {
-            setTaskStatus(TaskStatus.NEW);
-        } else if (doneCount == subtaskIds.size()) {
-            setTaskStatus(TaskStatus.DONE);
-        } else {
-            setTaskStatus(TaskStatus.IN_PROGRESS);
-        }
-    }
-
-    /**
-     * Если метод вызывается без параметров то сбрасывает статус задач.
-     */
-    public void updateStatus() {
-        if (subtaskIds.isEmpty()) {
-            setTaskStatus(TaskStatus.NEW);
-        }
     }
 
     @Override
@@ -96,5 +40,9 @@ public class Epic extends Task {
 
     public List<Integer> getSubtaskIds() {
         return new ArrayList<>(subtaskIds);
+    }
+
+    public void setSubtaskIds(List<Integer> subtaskIds) {
+        this.subtaskIds = subtaskIds;
     }
 }
