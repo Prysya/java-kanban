@@ -81,7 +81,7 @@ public class Task {
     /**
      * @param taskStatus {@link #taskStatus}
      */
-    protected void setTaskStatus(TaskStatus taskStatus) {
+    public void setTaskStatus(TaskStatus taskStatus) {
         this.taskStatus = taskStatus;
     }
 
