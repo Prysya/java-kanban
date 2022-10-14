@@ -15,7 +15,7 @@ public class Epic extends Task {
      */
     private static final TaskType TASK_TYPE = TaskType.EPIC;
     /**
-     * Список с подзадачами {@link Subtask}.
+     * Поле со списком уникальных идентификаторов подзадач.
      */
     private List<Integer> subtaskIds = new ArrayList<>();
 
