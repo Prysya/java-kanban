@@ -325,7 +325,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         for (Subtask subtask : subtasksList) {
             duration += subtask.getDuration();
-            if (Objects.isNull(startTime) || Objects.isNull(subtask.getStartTime()) || startTime.isAfter(subtask.getStartTime())) {
+            if (Objects.isNull(startTime) || (!Objects.isNull(subtask.getStartTime()) && startTime.isAfter(subtask.getStartTime()))) {
                 startTime = subtask.getStartTime();
             }
         }
