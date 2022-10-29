@@ -1,8 +1,8 @@
-package manager;
+package main.manager;
 
-import task.Epic;
-import task.Subtask;
-import task.Task;
+import main.task.Epic;
+import main.task.Subtask;
+import main.task.Task;
 
 import java.util.List;
 
@@ -151,4 +151,18 @@ public interface TaskManager {
      * @param epic {@link Epic}
      */
     void updateEpicStatus(Epic epic);
+
+    /**
+     * Обновление продолжительности и статуса эпика.
+     *
+     * @param epic {@link Epic}
+     */
+    void updateEpicTimeAndDutation(Epic epic);
+
+    /**
+     * Получение отсрортированного листа подзадач по времени начала
+     *
+     * @return отсортированный лист задач
+     */
+    List<Task> getPrioritizedTasks();
 }
