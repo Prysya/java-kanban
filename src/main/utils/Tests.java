@@ -1,12 +1,13 @@
-package utils;
+package main.utils;
 
-import enums.TaskStatus;
-import manager.FileBackedTasksManager;
-import task.Epic;
-import task.Subtask;
-import task.Task;
+import main.enums.TaskStatus;
+import main.manager.FileBackedTasksManager;
+import main.task.Epic;
+import main.task.Subtask;
+import main.task.Task;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public final class Tests {
@@ -16,16 +17,15 @@ public final class Tests {
     public static void generateTests() {
         FileBackedTasksManager taskManager = Managers.getDefaultFileBacked();
 
-        taskManager.createTask(new Task("Таск 1", "Таск 1", TaskStatus.NEW));
-        taskManager.createTask(new Task("Таск 2", "Таск 2", TaskStatus.NEW));
+        taskManager.createTask(new Task("Таск 1", "Таск 1", TaskStatus.NEW, 10, LocalDateTime.now().minusDays(30)));
+        taskManager.createTask(new Task("Таск 2", "Таск 2", TaskStatus.NEW, 10, LocalDateTime.now().minusDays(2)));
 
         taskManager.createEpic(new Epic("Эпик 1", "Эпик 1"));
         taskManager.createEpic(new Epic("Эпик 2", "Эпик 2"));
 
-        taskManager.createSubtask(new Subtask("Подтаска 1", "Подтаска 1 - Epic 1", TaskStatus.DONE, 3));
-        taskManager.createSubtask(new Subtask("Подтаска 2", "Подтаска 2 - Epic 1", TaskStatus.DONE, 3));
-        taskManager.createSubtask(new Subtask("Подтаска 3", "Подтаска 3 - Epic 1", TaskStatus.DONE, 3));
-        taskManager.createSubtask(new Subtask("Подтаска 4", "Подтаска 4 - Epic 1", TaskStatus.DONE, 3));
+        for (int i = 1; i < 5; i += 1) {
+            taskManager.createSubtask(new Subtask("Подтаска " + i, "Подтаска " + i + " - Epic " + i, TaskStatus.DONE, 10, LocalDateTime.now().minusDays(i), 3));
+        }
 
 
         List<Task> tasks = taskManager.getTasks();

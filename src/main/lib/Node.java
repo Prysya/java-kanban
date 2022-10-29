@@ -1,4 +1,4 @@
-package lib;
+package main.lib;
 
 public class Node<E> {
     private final E data;

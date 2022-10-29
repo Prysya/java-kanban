@@ -1,12 +1,13 @@
-package manager;
+package main.manager;
 
-import lib.CustomTaskLinkedList;
-import lib.Node;
-import task.Epic;
-import task.Subtask;
-import task.Task;
+import main.lib.CustomTaskLinkedList;
+import main.lib.Node;
+import main.task.Epic;
+import main.task.Subtask;
+import main.task.Task;
 
 import java.util.List;
+import java.util.Objects;
 
 public class InMemoryHistoryManager implements HistoryManager {
     /**
@@ -21,7 +22,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (task == null) return;
+        if (Objects.isNull(task)) return;
 
         remove(task.getId());
 

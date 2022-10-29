@@ -1,8 +1,8 @@
-package utils;
+package main.utils;
 
-import manager.FileBackedTasksManager;
-import manager.InMemoryHistoryManager;
-import manager.InMemoryTaskManager;
+import main.manager.FileBackedTasksManager;
+import main.manager.InMemoryHistoryManager;
+import main.manager.InMemoryTaskManager;
 
 public final class Managers {
     private Managers() {

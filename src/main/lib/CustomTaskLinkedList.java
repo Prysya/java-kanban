@@ -1,11 +1,8 @@
-package lib;
+package main.lib;
 
-import task.Task;
+import main.task.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CustomTaskLinkedList {
     /**
@@ -26,13 +23,13 @@ public class CustomTaskLinkedList {
      *             Добавление элемента в конец списка
      */
     public void linkLast(Task task) {
-        if (task == null) return;
+        if (Objects.isNull(task)) return;
 
         final Node<Task> oldTail = tail;
         final Node<Task> newNode = new Node<>(oldTail, task, null);
 
         tail = newNode;
-        if (head == null) {
+        if (Objects.isNull(head)) {
             head = newNode;
         }
 
@@ -68,7 +65,7 @@ public class CustomTaskLinkedList {
      * @param node {@link Node}
      */
     public void removeNode(Node<Task> node) {
-        if (node == null) return;
+        if (Objects.isNull(node)) return;
 
         hashTable.remove(node.getData().getId());
 
