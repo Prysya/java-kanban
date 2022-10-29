@@ -1,7 +1,10 @@
-package task;
+package main.task;
 
-import enums.TaskStatus;
-import enums.TaskType;
+import main.enums.TaskStatus;
+import main.enums.TaskType;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Класс для подзадач класса {@link Epic}.
@@ -25,12 +28,14 @@ public class Subtask extends Task {
      * @param parentEpicId уникальный идентификатор {@link Epic}
      */
     public Subtask(
-            final String title,
-            final String description,
-            final TaskStatus taskStatus,
-            final int parentEpicId
+            String title,
+            String description,
+            TaskStatus taskStatus,
+            int duration,
+            LocalDateTime startTime,
+            int parentEpicId
     ) {
-        super(title, description, taskStatus);
+        super(title, description, taskStatus, duration, startTime);
         this.parentEpicId = parentEpicId;
     }
 
@@ -52,6 +57,22 @@ public class Subtask extends Task {
                 + getTitle() + ","
                 + getTaskStatus().getStatus() + ","
                 + getDescription() + ","
+                + getDuration() + ","
+                + getStartTime() + ","
                 + getParentEpicId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Subtask)) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return Objects.equals(getParentEpicId(), subtask.getParentEpicId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getParentEpicId());
     }
 }
