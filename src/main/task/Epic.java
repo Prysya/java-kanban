@@ -1,8 +1,9 @@
-package task;
+package main.task;
 
-import enums.TaskStatus;
-import enums.TaskType;
+import main.enums.TaskStatus;
+import main.enums.TaskType;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public class Epic extends Task {
      */
     private List<Integer> subtaskIds = new ArrayList<>();
 
+    private LocalDateTime endTime;
+
     /**
      * Конструктор класса {@link Epic}.
      *
@@ -26,7 +29,7 @@ public class Epic extends Task {
      * @param description описание эпика
      */
     public Epic(String title, String description) {
-        super(title, description, TaskStatus.NEW);
+        super(title, description, TaskStatus.NEW, 0, null);
     }
 
     @Override
@@ -35,7 +38,9 @@ public class Epic extends Task {
                 + TASK_TYPE.getStatus() + ","
                 + getTitle() + ","
                 + getTaskStatus().getStatus() + ","
-                + getDescription() + ",";
+                + getDescription() + ","
+                + getDuration() + ","
+                + getStartTime() + ",";
     }
 
     public List<Integer> getSubtaskIds() {
@@ -44,5 +49,14 @@ public class Epic extends Task {
 
     public void setSubtaskIds(List<Integer> subtaskIds) {
         this.subtaskIds = subtaskIds;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 }
