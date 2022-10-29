@@ -1,10 +1,11 @@
-package manager;
+package main.manager;
 
-import enums.TaskStatus;
-import enums.TaskType;
-import task.Epic;
-import task.Subtask;
-import task.Task;
+import main.enums.TaskFromString;
+import main.enums.TaskStatus;
+import main.enums.TaskType;
+import main.task.Epic;
+import main.task.Subtask;
+import main.task.Task;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -13,13 +14,14 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Количество параметров в csv строке.
      */
-    private static final int CSV_PARAMS_COUNT = 6;
+    private static final int CSV_PARAMS_COUNT = 8;
     /**
      * Кодировка файла.
      */
@@ -33,11 +35,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
 
+        if (Objects.isNull(file)) {
+            return fileBackedTasksManager;
+        }
+
         List<String> lines = getDataFromFile(file);
 
         final int HEADER_SIZE = 1;
 
-        if (lines == null || lines.size() < HEADER_SIZE) {
+        if (Objects.isNull(lines) || lines.size() < HEADER_SIZE || HEADER_SIZE > lines.size() - 2) {
             return fileBackedTasksManager;
         }
 
@@ -79,7 +85,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             TaskType type = TaskType.fromString(lineAsArray[1]);
 
-            if (type == null) continue;
+            if (Objects.isNull(type)) continue;
 
             switch (type) {
                 case TASK:
@@ -164,7 +170,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] indexesFromString = value.split(",");
 
         if (indexesFromString.length > 0) {
-            Arrays.stream(indexesFromString).forEach(index -> indexes.add(Integer.parseInt(index)));
+            Arrays.stream(indexesFromString).forEach(index -> indexes.add(Integer.parseInt(index.trim())));
         }
 
         return indexes;
@@ -179,17 +185,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static Epic epicFromString(String value) {
         String[] values = value.split(",");
 
-        final int idIndex = 0;
-        final int titleIndex = 2;
-        final int descriptionIndex = 4;
-
         // -1 потому что у эпика нет данных в колоке epic
         if (values.length < CSV_PARAMS_COUNT - 1) {
             return null;
         }
 
-        Epic epic = new Epic(values[titleIndex], values[descriptionIndex]);
-        epic.setId(Integer.parseInt(values[idIndex]));
+        Epic epic = new Epic(
+                values[TaskFromString.TITLE.getIndex()],
+                values[TaskFromString.DESCRIPTION.getIndex()]
+        );
+        epic.setId(Integer.parseInt(values[TaskFromString.ID.getIndex()]));
 
         return epic;
     }
@@ -203,18 +208,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static Subtask subtaskFromString(String value) {
         String[] values = value.split(",");
 
-        final int idIndex = 0;
-        final int titleIndex = 2;
-        final int subtaskStatusIndex = 3;
-        final int descriptionIndex = 4;
-        final int parentEpicIdIndex = 5;
-
         if (values.length < CSV_PARAMS_COUNT) {
             return null;
         }
 
-        Subtask subtask = new Subtask(values[titleIndex], values[descriptionIndex], TaskStatus.fromString(values[subtaskStatusIndex]), Integer.parseInt(values[parentEpicIdIndex]));
-        subtask.setId(Integer.parseInt(values[idIndex]));
+        Subtask subtask = new Subtask(
+                values[TaskFromString.TITLE.getIndex()],
+                values[TaskFromString.DESCRIPTION.getIndex()],
+                TaskStatus.fromString(values[TaskFromString.STATUS.getIndex()]),
+                Integer.parseInt(values[TaskFromString.DURATION.getIndex()]),
+                Objects.equals(values[TaskFromString.START_DATE.getIndex()], "null") ? null :LocalDateTime.parse(values[TaskFromString.START_DATE.getIndex()]),
+                Integer.parseInt(values[TaskFromString.PARENT_EPIC_ID.getIndex()]));
+        subtask.setId(Integer.parseInt(values[TaskFromString.ID.getIndex()]));
 
         return subtask;
     }
@@ -228,18 +233,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public static Task taskFromString(String value) {
         String[] values = value.split(",");
 
-        final int idIndex = 0;
-        final int titleIndex = 2;
-        final int taskStatusIndex = 3;
-        final int descriptionIndex = 4;
-
-        // -1 потому что у таска нет данных в колоке epic
+        // -1 потому что у таски нет данных в колоке epic
         if (values.length < CSV_PARAMS_COUNT - 1) {
             return null;
         }
 
-        Task task = new Task(values[titleIndex], values[descriptionIndex], TaskStatus.fromString(values[taskStatusIndex]));
-        task.setId(Integer.parseInt(values[idIndex]));
+        Task task = new Task(
+                values[TaskFromString.TITLE.getIndex()],
+                values[TaskFromString.DESCRIPTION.getIndex()],
+                TaskStatus.fromString(values[TaskFromString.STATUS.getIndex()]),
+                Integer.parseInt(values[TaskFromString.DURATION.getIndex()]),
+                Objects.equals(values[TaskFromString.START_DATE.getIndex()], "null") ? null :LocalDateTime.parse(values[TaskFromString.START_DATE.getIndex()])
+        );
+        task.setId(Integer.parseInt(values[TaskFromString.ID.getIndex()]));
 
         return task;
     }
@@ -249,7 +255,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      */
     void save() {
         try (FileWriter fileWriter = new FileWriter("history.csv", FILE_CHARSET)) {
-            fileWriter.write("id,type,name,status,description,epic\n");
+            fileWriter.write("id,type,name,status,description,duration,startTime,epic\n");
 
 
             Arrays.asList(getTasks(), getEpics(), getSubtasks()).forEach(line -> line.forEach(task -> {
