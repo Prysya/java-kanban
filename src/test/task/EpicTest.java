@@ -7,6 +7,9 @@ import main.task.Subtask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
@@ -66,5 +69,41 @@ class EpicTest {
 
         assertEquals(epic.getSubtaskIds().size(), SUBTASK_COUNT);
         assertEquals(epic.getTaskStatus(), TaskStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void shouldCalculateEpicTime() {
+        LocalDateTime localDateTime = LocalDateTime.of(2022, Month.DECEMBER, 1, 10, 10);
+        for (int i = 0; i < 4; i += 1) {
+            taskManager.createSubtask(new Subtask("Subtask" + i, "desc" + i, TaskStatus.NEW, 5, localDateTime.plusHours(i), epic.getId()));
+        }
+
+        assertEquals(epic.getDuration(), 5 * 4);
+        assertEquals(epic.getStartTime(), localDateTime);
+        assertEquals(epic.getEndTime(), localDateTime.plusMinutes(5 * 4));
+    }
+
+    @Test
+    void shouldCalculateEpicTimeIfSubtasksStartTimeIsNull() {
+        for (int i = 0; i < 4; i += 1) {
+            taskManager.createSubtask(new Subtask("Subtask" + i, "desc" + i, TaskStatus.NEW, 5, null, epic.getId()));
+        }
+
+        assertEquals(epic.getDuration(), 5 * 4);
+        assertNull(epic.getStartTime());
+        assertNull(epic.getEndTime());
+    }
+
+    @Test
+    void shouldCalculateEpicTimeIfSomeSubtasksStartTimeIsNull() {
+        LocalDateTime localDateTime = LocalDateTime.of(2022, Month.DECEMBER, 1, 10, 10);
+        for (int i = 0; i < 4; i += 1) {
+            taskManager.createSubtask(new Subtask("Subtask" + i, "desc" + i, TaskStatus.NEW, 5, localDateTime.plusHours(i), epic.getId()));
+            taskManager.createSubtask(new Subtask("Subtask" + i, "desc" + i, TaskStatus.NEW, 5, null, epic.getId()));
+        }
+
+        assertEquals(epic.getDuration(), 5 * 8);
+        assertEquals(epic.getStartTime(), localDateTime);
+        assertEquals(epic.getEndTime(), localDateTime.plusMinutes(5 * 8));
     }
 }
