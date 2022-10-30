@@ -19,7 +19,7 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         return new FileBackedTasksManager();
     }
 
-    void checkLoadFromFileIsEmpty(File file) {
+    private void checkLoadFromFileIsEmpty(File file) {
         FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(file);
 
         assertTrue(fileBackedTasksManager.getTasks().isEmpty());

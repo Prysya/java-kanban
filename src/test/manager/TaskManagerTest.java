@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
-    final int TASK_COUNT = 3;
-    T manager;
+    private final int TASK_COUNT = 3;
+    private T manager;
 
     abstract T createTaskManager();
 

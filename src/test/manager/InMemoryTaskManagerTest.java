@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
-    InMemoryTaskManager inMemoryTaskManager;
+    private InMemoryTaskManager inMemoryTaskManager;
 
     @Override
     InMemoryTaskManager createTaskManager() {
@@ -38,11 +38,11 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         final int TASKS_COUNT = 5;
         for (int i = 0; i < TASKS_COUNT; i += 1) {
             Task task = new Task("task" + i, "task", TaskStatus.NEW, 10, null);
-            manager.createTask(task);
-            manager.getTaskById(task.getId());
+            inMemoryTaskManager.createTask(task);
+            inMemoryTaskManager.getTaskById(task.getId());
         }
 
-        assertEquals(manager.getHistory().size(), TASKS_COUNT);
-        assertEquals(manager.getHistory().get(0).getTitle(), "task0");
+        assertEquals(inMemoryTaskManager.getHistory().size(), TASKS_COUNT);
+        assertEquals(inMemoryTaskManager.getHistory().get(0).getTitle(), "task0");
     }
 }

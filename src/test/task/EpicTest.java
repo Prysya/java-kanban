@@ -13,9 +13,9 @@ import java.time.Month;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
-    final int SUBTASK_COUNT = 3;
-    InMemoryTaskManager taskManager;
-    Epic epic;
+    private final int SUBTASK_COUNT = 3;
+    private InMemoryTaskManager taskManager;
+    private Epic epic;
 
     @BeforeEach
     void createTaskManager() {
@@ -24,7 +24,7 @@ class EpicTest {
         epic = taskManager.getEpics().get(0);
     }
 
-    void fillEpicWithSubtasks(TaskStatus taskStatus) {
+    private void fillEpicWithSubtasks(TaskStatus taskStatus) {
         for (int i = 0; i < SUBTASK_COUNT; i += 1) {
             taskManager.createSubtask(new Subtask("title", "description", taskStatus, 0, null, epic.getId()));
         }

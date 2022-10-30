@@ -11,15 +11,15 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
-    final int TASKS_COUNT = 5;
-    InMemoryHistoryManager inMemoryHistoryManager;
+    private final int TASKS_COUNT = 5;
+    private InMemoryHistoryManager inMemoryHistoryManager;
 
     @BeforeEach
     void createHistoryManager() {
         inMemoryHistoryManager = new InMemoryHistoryManager();
     }
 
-    void fillHistoryByTasks(InMemoryHistoryManager manager) {
+    private void fillHistoryByTasks(InMemoryHistoryManager manager) {
 
         IntStream.iterate(1, i -> i + 1).limit(TASKS_COUNT).forEach(index -> {
             Task task = new Task(String.valueOf(index), "desc", TaskStatus.NEW, 10, null);
