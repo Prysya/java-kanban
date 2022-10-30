@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
@@ -83,7 +84,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (String taskLine : tasks) {
             String[] lineAsArray = taskLine.split(",");
 
-            TaskType type = TaskType.fromString(lineAsArray[1]);
+            TaskType type = TaskType.fromString(lineAsArray[1].trim());
 
             if (Objects.isNull(type)) continue;
 
@@ -183,18 +184,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @return {@link Epic}
      */
     public static Epic epicFromString(String value) {
-        String[] values = value.split(",");
+        List<String> values = Arrays.stream(value.split(",")).map(String::trim).collect(Collectors.toList());
 
         // -1 потому что у эпика нет данных в колоке epic
-        if (values.length < CSV_PARAMS_COUNT - 1) {
+        if (values.size() < CSV_PARAMS_COUNT - 1) {
             return null;
         }
 
         Epic epic = new Epic(
-                values[TaskFromString.TITLE.getIndex()],
-                values[TaskFromString.DESCRIPTION.getIndex()]
+                values.get(TaskFromString.TITLE.getIndex()),
+                values.get(TaskFromString.DESCRIPTION.getIndex())
         );
-        epic.setId(Integer.parseInt(values[TaskFromString.ID.getIndex()]));
+        epic.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
         return epic;
     }
@@ -206,20 +207,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @return {@link Subtask}
      */
     public static Subtask subtaskFromString(String value) {
-        String[] values = value.split(",");
+        List<String> values = Arrays.stream(value.split(",")).map(String::trim).collect(Collectors.toList());
 
-        if (values.length < CSV_PARAMS_COUNT) {
+        if (values.size() < CSV_PARAMS_COUNT) {
             return null;
         }
 
         Subtask subtask = new Subtask(
-                values[TaskFromString.TITLE.getIndex()],
-                values[TaskFromString.DESCRIPTION.getIndex()],
-                TaskStatus.fromString(values[TaskFromString.STATUS.getIndex()]),
-                Integer.parseInt(values[TaskFromString.DURATION.getIndex()]),
-                Objects.equals(values[TaskFromString.START_DATE.getIndex()], "null") ? null :LocalDateTime.parse(values[TaskFromString.START_DATE.getIndex()]),
-                Integer.parseInt(values[TaskFromString.PARENT_EPIC_ID.getIndex()]));
-        subtask.setId(Integer.parseInt(values[TaskFromString.ID.getIndex()]));
+                values.get(TaskFromString.TITLE.getIndex()),
+                values.get(TaskFromString.DESCRIPTION.getIndex()),
+                TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
+                Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
+                Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ? null :LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex())),
+                Integer.parseInt(values.get(TaskFromString.PARENT_EPIC_ID.getIndex())));
+        subtask.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
         return subtask;
     }
@@ -231,21 +232,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @return {@link Task}
      */
     public static Task taskFromString(String value) {
-        String[] values = value.split(",");
+        List<String> values = Arrays.stream(value.split(",")).map(String::trim).collect(Collectors.toList());
 
         // -1 потому что у таски нет данных в колоке epic
-        if (values.length < CSV_PARAMS_COUNT - 1) {
+        if (values.size() < CSV_PARAMS_COUNT - 1) {
             return null;
         }
 
         Task task = new Task(
-                values[TaskFromString.TITLE.getIndex()],
-                values[TaskFromString.DESCRIPTION.getIndex()],
-                TaskStatus.fromString(values[TaskFromString.STATUS.getIndex()]),
-                Integer.parseInt(values[TaskFromString.DURATION.getIndex()]),
-                Objects.equals(values[TaskFromString.START_DATE.getIndex()], "null") ? null :LocalDateTime.parse(values[TaskFromString.START_DATE.getIndex()])
+                values.get(TaskFromString.TITLE.getIndex()),
+                values.get(TaskFromString.DESCRIPTION.getIndex()),
+                TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
+                Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
+                Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ? null :LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex()))
         );
-        task.setId(Integer.parseInt(values[TaskFromString.ID.getIndex()]));
+        task.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
         return task;
     }
