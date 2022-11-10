@@ -1,6 +1,7 @@
 package main.manager;
 
 import main.enums.TaskStatus;
+import main.exceptions.SameDateException;
 import main.task.Epic;
 import main.task.Subtask;
 import main.task.Task;
@@ -12,13 +13,13 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager inMemoryHistoryManager =
-            Managers.getDefaultHistory();
+        Managers.getDefaultHistory();
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
 
     private final TreeSet<Task> tasksTree = new TreeSet<>(
-            CustomComparators.byStartTime()
+        CustomComparators.byStartTime()
     );
     /**
      * Уникальный Идентификатор задач.
@@ -157,8 +158,11 @@ public class InMemoryTaskManager implements TaskManager {
         int taskId = generateId();
         task.setId(taskId);
 
-        tasks.put(taskId, task);
-        tasksTree.add(task);
+        try {
+            addTaskToTree(task);
+            tasks.put(taskId, task);
+        } catch (SameDateException ignored) {
+        }
     }
 
     @Override
@@ -186,12 +190,15 @@ public class InMemoryTaskManager implements TaskManager {
 
             subtask.setId(subtaskId);
 
-            addEpicSubtaskId(epic, subtaskId);
-            subtasks.put(id, subtask);
-            tasksTree.add(subtask);
+            try {
+                addTaskToTree(subtask);
+                addEpicSubtaskId(epic, subtaskId);
+                subtasks.put(id, subtask);
 
-            updateEpicStatus(epic);
-            updateEpicTimeAndDutation(epic);
+                updateEpicStatus(epic);
+                updateEpicTimeAndDutation(epic);
+            } catch (SameDateException ignored) {
+            }
         }
     }
 
@@ -201,8 +208,11 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
-        tasks.put(task.getId(), task);
-        tasksTree.add(task);
+        try {
+            addTaskToTree(task);
+            tasks.put(task.getId(), task);
+        } catch (SameDateException ignored) {
+        }
     }
 
     @Override
@@ -223,10 +233,14 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(subtask.getParentEpicId());
 
         if (epic != null) {
-            subtasks.put(subtask.getId(), subtask);
-            tasksTree.add(subtask);
-            updateEpicStatus(epic);
-            updateEpicTimeAndDutation(epic);
+            try {
+                addTaskToTree(subtask);
+                subtasks.put(subtask.getId(), subtask);
+                updateEpicStatus(epic);
+                updateEpicTimeAndDutation(epic);
+            } catch (SameDateException ignored) {
+            }
+
         }
     }
 
@@ -352,9 +366,9 @@ public class InMemoryTaskManager implements TaskManager {
      */
     private int calculateTasksCount(List<Subtask> subtaskList, TaskStatus status) {
         return (int) subtaskList.stream()
-                .filter(subtask ->
-                        subtask != null && subtask.getTaskStatus()
-                                .equals(status)).count();
+            .filter(subtask ->
+                subtask != null && subtask.getTaskStatus()
+                    .equals(status)).count();
     }
 
     /**
@@ -382,5 +396,18 @@ public class InMemoryTaskManager implements TaskManager {
      */
     private void add(Task task) {
         inMemoryHistoryManager.add(task);
+    }
+
+    /**
+     * Добавление {@link Task}, {@link Epic}, {@link Subtask} в {@link #tasksTree}.
+     *
+     * @throws SameDateException при пересечении времени задач
+     */
+    private void addTaskToTree(Task task) throws SameDateException {
+        if (tasksTree.contains(task)) {
+            throw new SameDateException("Ошибка пересечения задач");
+        }
+
+        tasksTree.add(task);
     }
 }
