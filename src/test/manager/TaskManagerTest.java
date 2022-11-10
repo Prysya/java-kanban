@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -464,5 +465,39 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(manager.getPrioritizedTasks().get(1).getId(), 5);
         assertEquals(manager.getPrioritizedTasks().get(2).getId(), 2);
         assertEquals(manager.getPrioritizedTasks().get(3).getId(), 4);
+    }
+
+    @Test
+    void shouldDoNotAddTaskAndSubtaskWithSameTime() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Task task = new Task("Test", "test", TaskStatus.NEW, 10, localDateTime);
+        manager.createTask(task);
+        manager.createEpic(createEpic());
+        for (int i = 1; i <= 4; i += 1) {
+            Subtask subtask = new Subtask("Title" + i, "description", TaskStatus.NEW, 10, localDateTime, manager.getEpics().get(0).getId());
+            manager.createSubtask(subtask);
+        }
+
+        List<Task> treeList = manager.getPrioritizedTasks();
+
+        assertEquals(treeList.size(), 1);
+        assertEquals(treeList.get(0), task);
+    }
+
+    @Test
+    void shouldDoNotAddSubtaskWithSameTime() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        manager.createEpic(createEpic());
+        Subtask subtask = new Subtask("Title", "description", TaskStatus.NEW, 10, localDateTime, manager.getEpics().get(0).getId());
+        manager.createSubtask(subtask);
+
+        for (int i = 1; i <= 4; i += 1) {
+            manager.createSubtask(new Subtask("Title" + i, "description", TaskStatus.NEW, 10, localDateTime, manager.getEpics().get(0).getId()));
+        }
+
+        List<Task> treeList = manager.getPrioritizedTasks();
+
+        assertEquals(treeList.size(), 1);
+        assertEquals(treeList.get(0), subtask);
     }
 }
