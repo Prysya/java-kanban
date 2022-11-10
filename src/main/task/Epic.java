@@ -35,12 +35,12 @@ public class Epic extends Task {
     @Override
     public String toString() {
         return getId() + ","
-                + TASK_TYPE.getStatus() + ","
-                + getTitle() + ","
-                + getTaskStatus().getStatus() + ","
-                + getDescription() + ","
-                + getDuration() + ","
-                + getStartTime() + ",";
+            + TASK_TYPE.getStatus() + ","
+            + getTitle() + ","
+            + getTaskStatus().getStatus() + ","
+            + getDescription() + ","
+            + getDuration() + ","
+            + getStartTime() + ",";
     }
 
     public List<Integer> getSubtaskIds() {

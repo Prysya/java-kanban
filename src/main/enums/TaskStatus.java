@@ -27,7 +27,7 @@ public enum TaskStatus {
     @Override
     public String toString() {
         return "TaskStatus{"
-                + "status='" + status + '\''
-                + '}';
+            + "status='" + status + '\''
+            + '}';
     }
 }

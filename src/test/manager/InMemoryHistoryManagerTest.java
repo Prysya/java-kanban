@@ -94,8 +94,8 @@ class InMemoryHistoryManagerTest {
         inMemoryHistoryManager.remove(TASKS_COUNT);
 
         final IndexOutOfBoundsException exception = assertThrows(
-                IndexOutOfBoundsException.class,
-                () -> inMemoryHistoryManager.getHistory().get(TASKS_COUNT - 1));
+            IndexOutOfBoundsException.class,
+            () -> inMemoryHistoryManager.getHistory().get(TASKS_COUNT - 1));
 
         assertEquals("Index 4 out of bounds for length 4", exception.getMessage());
     }

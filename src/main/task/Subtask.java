@@ -28,12 +28,12 @@ public class Subtask extends Task {
      * @param parentEpicId уникальный идентификатор {@link Epic}
      */
     public Subtask(
-            String title,
-            String description,
-            TaskStatus taskStatus,
-            int duration,
-            LocalDateTime startTime,
-            int parentEpicId
+        String title,
+        String description,
+        TaskStatus taskStatus,
+        int duration,
+        LocalDateTime startTime,
+        int parentEpicId
     ) {
         super(title, description, taskStatus, duration, startTime);
         this.parentEpicId = parentEpicId;
@@ -53,13 +53,13 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return getId() + ","
-                + TASK_TYPE.getStatus() + ","
-                + getTitle() + ","
-                + getTaskStatus().getStatus() + ","
-                + getDescription() + ","
-                + getDuration() + ","
-                + getStartTime() + ","
-                + getParentEpicId();
+            + TASK_TYPE.getStatus() + ","
+            + getTitle() + ","
+            + getTaskStatus().getStatus() + ","
+            + getDescription() + ","
+            + getDuration() + ","
+            + getStartTime() + ","
+            + getParentEpicId();
     }
 
     @Override

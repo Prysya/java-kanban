@@ -78,7 +78,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @param tasks   лист задач в виде строки
      * @return мапу типов задач, где ключ, это уникальный идентификатор
      */
-    private static Map<Integer, TaskType> parseAndfillTasksIntoManager(FileBackedTasksManager manager, List<String> tasks) {
+    protected static Map<Integer, TaskType> parseAndfillTasksIntoManager(FileBackedTasksManager manager, List<String> tasks) {
         Map<Integer, TaskType> typeByIndex = new HashMap<>();
 
         for (String taskLine : tasks) {
@@ -192,8 +192,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         Epic epic = new Epic(
-                values.get(TaskFromString.TITLE.getIndex()),
-                values.get(TaskFromString.DESCRIPTION.getIndex())
+            values.get(TaskFromString.TITLE.getIndex()),
+            values.get(TaskFromString.DESCRIPTION.getIndex())
         );
         epic.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
@@ -214,12 +214,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         Subtask subtask = new Subtask(
-                values.get(TaskFromString.TITLE.getIndex()),
-                values.get(TaskFromString.DESCRIPTION.getIndex()),
-                TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
-                Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
-                Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ? null :LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex())),
-                Integer.parseInt(values.get(TaskFromString.PARENT_EPIC_ID.getIndex())));
+            values.get(TaskFromString.TITLE.getIndex()),
+            values.get(TaskFromString.DESCRIPTION.getIndex()),
+            TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
+            Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
+            Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ? null : LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex())),
+            Integer.parseInt(values.get(TaskFromString.PARENT_EPIC_ID.getIndex())));
         subtask.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
         return subtask;
@@ -240,11 +240,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         Task task = new Task(
-                values.get(TaskFromString.TITLE.getIndex()),
-                values.get(TaskFromString.DESCRIPTION.getIndex()),
-                TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
-                Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
-                Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ? null :LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex()))
+            values.get(TaskFromString.TITLE.getIndex()),
+            values.get(TaskFromString.DESCRIPTION.getIndex()),
+            TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
+            Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
+            Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ? null : LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex()))
         );
         task.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
@@ -254,7 +254,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     /**
      * Метод для сохранения текущей истории в файл.
      */
-    void save() {
+    protected void save() {
         try (FileWriter fileWriter = new FileWriter("history.csv", FILE_CHARSET)) {
             fileWriter.write("id,type,name,status,description,duration,startTime,epic\n");
 

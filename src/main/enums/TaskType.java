@@ -27,7 +27,7 @@ public enum TaskType {
     @Override
     public String toString() {
         return "TaskType{"
-                + "type='" + type + '\''
-                + '}';
+            + "type='" + type + '\''
+            + '}';
     }
 }
