@@ -49,9 +49,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         // Обрезка листа от заголовка до футера где предпоследняя стркоа отступ, а последняя список идентификаторов
-        Map<Integer, TaskType> typeByIndex = parseAndfillTasksIntoManager(fileBackedTasksManager, lines.subList(HEADER_SIZE, lines.size() - 2));
+        Map<Integer, TaskType> typeByIndex = parseAndfillTasksIntoManager(
+                fileBackedTasksManager,
+                lines.subList(HEADER_SIZE, lines.size() - 2)
+        );
 
-        parseAndFillHistoryIntoManager(fileBackedTasksManager, historyFromString(lines.get(lines.size() - 1)), typeByIndex);
+        parseAndFillHistoryIntoManager(
+                fileBackedTasksManager,
+                historyFromString(lines.get(lines.size() - 1)),
+                typeByIndex
+        );
 
         return fileBackedTasksManager;
     }
@@ -65,7 +72,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             String content = Files.readString(Paths.get(file.getPath()));
             return new ArrayList<>(Arrays.asList(content.split(System.lineSeparator())));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Произошла ошибка во время чтения файла.");
             return null;
         }
@@ -78,7 +86,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @param tasks   лист задач в виде строки
      * @return мапу типов задач, где ключ, это уникальный идентификатор
      */
-    protected static Map<Integer, TaskType> parseAndfillTasksIntoManager(FileBackedTasksManager manager, List<String> tasks) {
+    protected static Map<Integer, TaskType> parseAndfillTasksIntoManager(
+            FileBackedTasksManager manager,
+            List<String> tasks
+    ) {
         Map<Integer, TaskType> typeByIndex = new HashMap<>();
 
         for (String taskLine : tasks) {
@@ -86,7 +97,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
             TaskType type = TaskType.fromString(lineAsArray[1].trim());
 
-            if (Objects.isNull(type)) continue;
+            if (Objects.isNull(type)) {
+                continue;
+            }
 
             switch (type) {
                 case TASK:
@@ -124,7 +137,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
      * @param historyIds  лист идентификаторов задач
      * @param typeByIndex мапа типов задач, где ключ, это уникальный идентификатор
      */
-    private static void parseAndFillHistoryIntoManager(FileBackedTasksManager manager, List<Integer> historyIds, Map<Integer, TaskType> typeByIndex) {
+    private static void parseAndFillHistoryIntoManager(
+            FileBackedTasksManager manager,
+            List<Integer> historyIds,
+            Map<Integer, TaskType> typeByIndex
+    ) {
         historyIds.forEach(taskId -> {
             TaskType type = typeByIndex.get(taskId);
 
@@ -192,8 +209,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         Epic epic = new Epic(
-            values.get(TaskFromString.TITLE.getIndex()),
-            values.get(TaskFromString.DESCRIPTION.getIndex())
+                values.get(TaskFromString.TITLE.getIndex()),
+                values.get(TaskFromString.DESCRIPTION.getIndex())
         );
         epic.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
@@ -214,12 +231,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         Subtask subtask = new Subtask(
-            values.get(TaskFromString.TITLE.getIndex()),
-            values.get(TaskFromString.DESCRIPTION.getIndex()),
-            TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
-            Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
-            Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ? null : LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex())),
-            Integer.parseInt(values.get(TaskFromString.PARENT_EPIC_ID.getIndex())));
+                values.get(TaskFromString.TITLE.getIndex()),
+                values.get(TaskFromString.DESCRIPTION.getIndex()),
+                TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
+                Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
+                Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ?
+                        null :
+                        LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex())),
+                Integer.parseInt(values.get(TaskFromString.PARENT_EPIC_ID.getIndex()))
+        );
         subtask.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
         return subtask;
@@ -240,11 +260,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         Task task = new Task(
-            values.get(TaskFromString.TITLE.getIndex()),
-            values.get(TaskFromString.DESCRIPTION.getIndex()),
-            TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
-            Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
-            Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ? null : LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex()))
+                values.get(TaskFromString.TITLE.getIndex()),
+                values.get(TaskFromString.DESCRIPTION.getIndex()),
+                TaskStatus.fromString(values.get(TaskFromString.STATUS.getIndex())),
+                Integer.parseInt(values.get(TaskFromString.DURATION.getIndex())),
+                Objects.equals(values.get(TaskFromString.START_DATE.getIndex()), "null") ?
+                        null :
+                        LocalDateTime.parse(values.get(TaskFromString.START_DATE.getIndex()))
         );
         task.setId(Integer.parseInt(values.get(TaskFromString.ID.getIndex())));
 
@@ -262,13 +284,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             Arrays.asList(getTasks(), getEpics(), getSubtasks()).forEach(line -> line.forEach(task -> {
                 try {
                     fileWriter.write(task + "\n");
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }));
 
             fileWriter.write("\n" + historyToString(getInMemoryHistoryManager()));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Произошла ошибка во время записи файла.");
         }
     }
@@ -327,6 +351,43 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void deleteSubtask(int subtaskId) {
         super.deleteSubtask(subtaskId);
+        save();
+    }
+
+    @Override
+    public void createTask(Task task) {
+        super.createTask(task);
+        save();
+    }
+
+    @Override
+    public void createEpic(Epic epic) {
+        super.createEpic(epic);
+        save();
+    }
+
+    @Override
+    public void createSubtask(Subtask subtask) {
+        super.createSubtask(subtask);
+        save();
+    }
+
+    @Override
+    public void updateTask(Task task) {
+        super.updateTask(task);
+        save();
+
+    }
+
+    @Override
+    public void updateEpic(Epic epic) {
+        super.updateEpic(epic);
+        save();
+    }
+
+    @Override
+    public void updateSubtask(Subtask subtask) {
+        super.updateSubtask(subtask);
         save();
     }
 }

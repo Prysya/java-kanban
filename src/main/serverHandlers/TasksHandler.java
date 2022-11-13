@@ -1,15 +1,9 @@
 package main.serverHandlers;
 
 import com.google.gson.Gson;
-import main.exceptions.BadRequestException;
 import main.exceptions.MethodNotAllowedException;
-import main.exceptions.NotFoundException;
 import main.manager.HTTPTaskManager;
-import main.task.Epic;
 import main.task.Task;
-import main.utils.UrlHelpers;
-
-import java.util.Objects;
 
 public class TasksHandler implements ServerHandler<Task> {
     private final Gson gson;

@@ -22,7 +22,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (Objects.isNull(task)) return;
+        if (Objects.isNull(task)) {
+            return;
+        }
 
         remove(task.getId());
 

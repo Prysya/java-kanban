@@ -24,12 +24,12 @@ public class Subtask extends Task {
      * @param parentEpicId уникальный идентификатор {@link Epic}
      */
     public Subtask(
-        String title,
-        String description,
-        TaskStatus taskStatus,
-        int duration,
-        LocalDateTime startTime,
-        int parentEpicId
+            String title,
+            String description,
+            TaskStatus taskStatus,
+            int duration,
+            LocalDateTime startTime,
+            int parentEpicId
     ) {
         super(TaskType.SUBTASK, title, description, taskStatus, duration, startTime);
         this.parentEpicId = parentEpicId;
@@ -49,20 +49,26 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return getId() + ","
-            + getTaskType().getStatus() + ","
-            + getTitle() + ","
-            + getTaskStatus().getStatus() + ","
-            + getDescription() + ","
-            + getDuration() + ","
-            + getStartTime() + ","
-            + getParentEpicId();
+                + getTaskType().getStatus() + ","
+                + getTitle() + ","
+                + getTaskStatus().getStatus() + ","
+                + getDescription() + ","
+                + getDuration() + ","
+                + getStartTime() + ","
+                + getParentEpicId();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Subtask)) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Subtask)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
         Subtask subtask = (Subtask) o;
         return Objects.equals(getParentEpicId(), subtask.getParentEpicId());
     }

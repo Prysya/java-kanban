@@ -2,14 +2,12 @@ package main.serverHandlers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import main.exceptions.BadRequestException;
 import main.exceptions.NotFoundException;
 import main.manager.HTTPTaskManager;
 import main.task.Task;
 import main.utils.UrlHelpers;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class TaskHandler implements ServerHandler<Task> {
@@ -25,7 +23,7 @@ public class TaskHandler implements ServerHandler<Task> {
 
     @Override
     public String getHandler() throws BadRequestException, NotFoundException {
-        if(UrlHelpers.checkForQueryIdParam(id)) {
+        if (UrlHelpers.checkForQueryIdParam(id)) {
             return gson.toJson(taskManager.getTasks());
         } else {
             Task task = taskManager.getTaskById(id);
@@ -51,7 +49,7 @@ public class TaskHandler implements ServerHandler<Task> {
 
     @Override
     public void deleteHandler() throws BadRequestException, NotFoundException {
-        if(UrlHelpers.checkForQueryIdParam(id)) {
+        if (UrlHelpers.checkForQueryIdParam(id)) {
             taskManager.deleteAllTasks();
         } else {
             if (Objects.isNull(taskManager.getTaskById(id))) {

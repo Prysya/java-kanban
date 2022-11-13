@@ -54,7 +54,8 @@ public class KVServer {
                 System.out.println("/load ждёт GET-запрос, а получил: " + h.getRequestMethod());
                 h.sendResponseHeaders(405, 0);
             }
-        } finally {
+        }
+        finally {
             h.close();
         }
     }
@@ -88,7 +89,8 @@ public class KVServer {
                 System.out.println("/save ждёт POST-запрос, а получил: " + h.getRequestMethod());
                 h.sendResponseHeaders(405, 0);
             }
-        } finally {
+        }
+        finally {
             h.close();
         }
     }
@@ -102,7 +104,8 @@ public class KVServer {
                 System.out.println("/register ждёт GET-запрос, а получил " + h.getRequestMethod());
                 h.sendResponseHeaders(405, 0);
             }
-        } finally {
+        }
+        finally {
             h.close();
         }
     }

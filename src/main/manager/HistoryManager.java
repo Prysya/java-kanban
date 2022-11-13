@@ -25,6 +25,4 @@ public interface HistoryManager {
      * @param id уникальный идентификатор задачи
      */
     void remove(int id);
-
-
 }

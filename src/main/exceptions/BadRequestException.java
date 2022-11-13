@@ -1,6 +1,5 @@
 package main.exceptions;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 
 public class BadRequestException extends HttpException {

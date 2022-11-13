@@ -56,7 +56,14 @@ public class Task {
         this.startTime = startTime;
     }
 
-    public Task(TaskType taskType, String title, String description, TaskStatus taskStatus, int duration, LocalDateTime startTime) {
+    public Task(
+            TaskType taskType,
+            String title,
+            String description,
+            TaskStatus taskStatus,
+            int duration,
+            LocalDateTime startTime
+    ) {
         this.taskType = taskType;
         this.title = title;
         this.description = description;
@@ -168,11 +175,20 @@ public class Task {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Task task = (Task) o;
-        return getId() == task.getId() && getDuration() == task.getDuration() && Objects.equals(getTitle(), task.getTitle()) && Objects.equals(getDescription(), task.getDescription()) && getTaskStatus() == task.getTaskStatus() && Objects.equals(getStartTime(), task.getStartTime());
+        return getId() == task.getId() &&
+                getDuration() == task.getDuration() &&
+                Objects.equals(getTitle(), task.getTitle()) &&
+                Objects.equals(getDescription(), task.getDescription()) &&
+                getTaskStatus() == task.getTaskStatus() &&
+                Objects.equals(getStartTime(), task.getStartTime());
     }
 
     @Override
@@ -189,11 +205,11 @@ public class Task {
     @Override
     public String toString() {
         return getId() + ","
-            + getTaskType().getStatus() + ","
-            + getTitle() + ","
-            + getTaskStatus().getStatus() + ","
-            + getDescription() + ","
-            + getDuration() + ","
-            + getStartTime() + ",";
+                + getTaskType().getStatus() + ","
+                + getTitle() + ","
+                + getTaskStatus().getStatus() + ","
+                + getDescription() + ","
+                + getDuration() + ","
+                + getStartTime() + ",";
     }
 }

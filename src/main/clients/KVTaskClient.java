@@ -1,8 +1,9 @@
 package main.clients;
 
-import com.google.gson.JsonParser;
+import main.utils.ErrorMessages;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -42,30 +43,27 @@ public class KVTaskClient {
      */
     private String makeGetResponse(URI uri) {
         try {
-            HttpResponse<String> response = client.send(HttpRequest.newBuilder().uri(uri).GET().build(), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
-                try {
-                    return JsonParser.parseString(response.body()).getAsString();
-                } catch (NullPointerException e) {
-                    System.out.println(e);
-                    System.out.println("Во время выполнения запроса возникла ошибка.\n" +
-                        "Проверьте, пожалуйста, адрес и повторите попытку.");
-                    return null;
-                }
+            HttpResponse<String> response = client.send(
+                    HttpRequest.newBuilder().uri(uri).GET().build(),
+                    HttpResponse.BodyHandlers.ofString()
+            );
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
+                return response.body();
             } else {
-                System.out.println("Что-то пошло не так. Сервер вернул код состояния: " + response.statusCode());
+                System.out.println(ErrorMessages.BAD_STATUS_CODE + response.statusCode());
             }
-        } catch (IOException | InterruptedException e) {
-            System.out.println(e);
-            System.out.println("Во время выполнения запроса возникла ошибка.\n" +
-                "Проверьте, пожалуйста, адрес и повторите попытку.");
+        }
+        catch (IOException | InterruptedException | NullPointerException e) {
+            System.out.println(ErrorMessages.BAD_RESPONSE_BODY);
         }
 
-        return null;
+        return "";
     }
 
     /**
      * Метод для получения токена с сервера
+     *
+     * @return json с токеном
      */
     private String getTokenResponse() {
         URI uri = URI.create(kvServerUrl + "/register");
@@ -81,15 +79,18 @@ public class KVTaskClient {
     public void put(String key, String json) {
         try {
             URI uri = URI.create(kvServerUrl + "/save/" + key + "?API_TOKEN=" + apiToken);
-            HttpResponse<String> response = client.send(HttpRequest.newBuilder().uri(uri).POST(HttpRequest.BodyPublishers.ofString(json)).build(), HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() == 200) {
+            HttpResponse<String> response = client.send(HttpRequest.newBuilder()
+                    .uri(uri)
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == HttpURLConnection.HTTP_OK) {
                 System.out.println("Json по ключу " + key + " сохранен успешно!");
             } else {
-                System.out.println("Что-то пошло не так. Сервер вернул код состояния: " + response.statusCode());
+                System.out.println(ErrorMessages.BAD_STATUS_CODE + response.statusCode());
             }
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Во время выполнения запроса возникла ошибка.\n" +
-                "Проверьте, пожалуйста, адрес и повторите попытку.");
+        }
+        catch (IOException | InterruptedException e) {
+            System.out.println(ErrorMessages.BAD_RESPONSE_BODY);
         }
     }
 
@@ -97,10 +98,10 @@ public class KVTaskClient {
      * Метод для получения данных по ключу с сервера
      *
      * @param key ключ для получения данных
+     * @return json с значением сохраненым по key
      */
     public String load(String key) {
         URI uri = URI.create(kvServerUrl + "/load/" + key + "?API_TOKEN=" + apiToken);
-
         return makeGetResponse(uri);
     }
 }

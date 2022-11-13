@@ -38,7 +38,8 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         if (!Objects.isNull(json)) {
             try {
                 return gson.fromJson(json, TypeToken.getParameterized(ArrayList.class, type).getType());
-            } catch (JsonSyntaxException ignored) {
+            }
+            catch (JsonSyntaxException ignored) {
             }
         }
         return null;

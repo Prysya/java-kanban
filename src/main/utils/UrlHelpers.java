@@ -19,7 +19,8 @@ public class UrlHelpers {
     public static int parseQueryValueToInt(String query) {
         try {
             return Integer.parseInt(query);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return -1;
         }
     }

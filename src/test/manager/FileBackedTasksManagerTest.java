@@ -53,7 +53,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @Test
     void shouldFillManagerFromTestFile() {
-        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(createFileFromTestFiles("filledHistory.csv"));
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(createFileFromTestFiles(
+                "filledHistory.csv"));
 
         assertEquals(fileBackedTasksManager.getTasks().size(), 2);
         assertEquals(fileBackedTasksManager.getEpics().size(), 2);
@@ -62,7 +63,8 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
 
     @Test
     void shouldUpdateEpicStatusAfterBackup() {
-        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(createFileFromTestFiles("filledHistory.csv"));
+        FileBackedTasksManager fileBackedTasksManager = FileBackedTasksManager.loadFromFile(createFileFromTestFiles(
+                "filledHistory.csv"));
 
         assertEquals(fileBackedTasksManager.getEpics().get(0).getTaskStatus(), TaskStatus.DONE);
         assertEquals(fileBackedTasksManager.getEpics().get(1).getTaskStatus(), TaskStatus.IN_PROGRESS);
@@ -73,7 +75,14 @@ public class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksM
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
         fileBackedTasksManager.createTask(new Task("test", "test", TaskStatus.NEW, 10, null));
         fileBackedTasksManager.createEpic(new Epic("test", "test"));
-        fileBackedTasksManager.createSubtask(new Subtask("test", "test", TaskStatus.NEW, 10, null, fileBackedTasksManager.getEpics().get(0).getId()));
+        fileBackedTasksManager.createSubtask(new Subtask(
+                "test",
+                "test",
+                TaskStatus.NEW,
+                10,
+                null,
+                fileBackedTasksManager.getEpics().get(0).getId()
+        ));
 
         fileBackedTasksManager.getTaskById(fileBackedTasksManager.getTasks().get(0).getId());
         fileBackedTasksManager.getEpicById(fileBackedTasksManager.getEpics().get(0).getId());

@@ -75,7 +75,14 @@ class EpicTest {
     void shouldCalculateEpicTime() {
         LocalDateTime localDateTime = LocalDateTime.of(2022, Month.DECEMBER, 1, 10, 10);
         for (int i = 0; i < 4; i += 1) {
-            taskManager.createSubtask(new Subtask("Subtask" + i, "desc" + i, TaskStatus.NEW, 5, localDateTime.plusHours(i), epic.getId()));
+            taskManager.createSubtask(new Subtask(
+                    "Subtask" + i,
+                    "desc" + i,
+                    TaskStatus.NEW,
+                    5,
+                    localDateTime.plusHours(i),
+                    epic.getId()
+            ));
         }
 
         assertEquals(epic.getDuration(), 5 * 4);
@@ -98,7 +105,14 @@ class EpicTest {
     void shouldCalculateEpicTimeIfSomeSubtasksStartTimeIsNull() {
         LocalDateTime localDateTime = LocalDateTime.of(2022, Month.DECEMBER, 1, 10, 10);
         for (int i = 0; i < 4; i += 1) {
-            taskManager.createSubtask(new Subtask("Subtask" + i, "desc" + i, TaskStatus.NEW, 5, localDateTime.plusHours(i), epic.getId()));
+            taskManager.createSubtask(new Subtask(
+                    "Subtask" + i,
+                    "desc" + i,
+                    TaskStatus.NEW,
+                    5,
+                    localDateTime.plusHours(i),
+                    epic.getId()
+            ));
             taskManager.createSubtask(new Subtask("Subtask" + i, "desc" + i, TaskStatus.NEW, 5, null, epic.getId()));
         }
 

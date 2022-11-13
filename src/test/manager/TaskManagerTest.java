@@ -408,7 +408,13 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldSortTasksInTaskTreeByStartDate() {
         for (int i = 0; i < 10; i += 1) {
-            Task task = new Task(String.valueOf(i), "description", TaskStatus.NEW, 10, LocalDateTime.now().minusDays(i));
+            Task task = new Task(
+                    String.valueOf(i),
+                    "description",
+                    TaskStatus.NEW,
+                    10,
+                    LocalDateTime.now().minusDays(i)
+            );
             manager.createTask(task);
         }
 
@@ -419,7 +425,13 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void shouldSetTasksWithStartTimeIsNullToTheEnd() {
         for (int i = 1; i <= 4; i += 1) {
-            Task task = new Task("Title" + i, "description" + i, TaskStatus.NEW, 10, i % 2 == 0 ? LocalDateTime.now() : null);
+            Task task = new Task(
+                    "Title" + i,
+                    "description" + i,
+                    TaskStatus.NEW,
+                    10,
+                    i % 2 == 0 ? LocalDateTime.now() : null
+            );
             manager.createTask(task);
         }
 
@@ -434,7 +446,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertTrue(manager.getPrioritizedTasks().isEmpty());
         manager.createEpic(createEpic());
 
-        Subtask subtask = new Subtask("Title", "description", TaskStatus.NEW, 10, LocalDateTime.now(), manager.getEpics().get(0).getId());
+        Subtask subtask = new Subtask(
+                "Title",
+                "description",
+                TaskStatus.NEW,
+                10,
+                LocalDateTime.now(),
+                manager.getEpics().get(0).getId()
+        );
         manager.createSubtask(subtask);
 
         assertEquals(manager.getPrioritizedTasks().size(), 1);
@@ -445,7 +464,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void shouldSortSubtasksInTaskTreeByStartDate() {
         manager.createEpic(createEpic());
         for (int i = 0; i < 10; i += 1) {
-            Subtask subtask = new Subtask("Title", "description", TaskStatus.NEW, 10, LocalDateTime.now().minusDays(i), manager.getEpics().get(0).getId());
+            Subtask subtask = new Subtask(
+                    "Title",
+                    "description",
+                    TaskStatus.NEW,
+                    10,
+                    LocalDateTime.now().minusDays(i),
+                    manager.getEpics().get(0).getId()
+            );
             manager.createSubtask(subtask);
         }
 
@@ -457,7 +483,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void shouldSetSubtaskWithStartTimeIsNullToTheEnd() {
         manager.createEpic(createEpic());
         for (int i = 1; i <= 4; i += 1) {
-            Subtask subtask = new Subtask("Title" + i, "description", TaskStatus.NEW, 10, i % 2 == 0 ? LocalDateTime.now() : null, manager.getEpics().get(0).getId());
+            Subtask subtask = new Subtask(
+                    "Title" + i,
+                    "description",
+                    TaskStatus.NEW,
+                    10,
+                    i % 2 == 0 ? LocalDateTime.now() : null,
+                    manager.getEpics().get(0).getId()
+            );
             manager.createSubtask(subtask);
         }
 
@@ -474,7 +507,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
         manager.createTask(task);
         manager.createEpic(createEpic());
         for (int i = 1; i <= 4; i += 1) {
-            Subtask subtask = new Subtask("Title" + i, "description", TaskStatus.NEW, 10, localDateTime, manager.getEpics().get(0).getId());
+            Subtask subtask = new Subtask(
+                    "Title" + i,
+                    "description",
+                    TaskStatus.NEW,
+                    10,
+                    localDateTime,
+                    manager.getEpics().get(0).getId()
+            );
             manager.createSubtask(subtask);
         }
 
@@ -488,11 +528,25 @@ abstract class TaskManagerTest<T extends TaskManager> {
     void shouldDoNotAddSubtaskWithSameTime() {
         LocalDateTime localDateTime = LocalDateTime.now();
         manager.createEpic(createEpic());
-        Subtask subtask = new Subtask("Title", "description", TaskStatus.NEW, 10, localDateTime, manager.getEpics().get(0).getId());
+        Subtask subtask = new Subtask(
+                "Title",
+                "description",
+                TaskStatus.NEW,
+                10,
+                localDateTime,
+                manager.getEpics().get(0).getId()
+        );
         manager.createSubtask(subtask);
 
         for (int i = 1; i <= 4; i += 1) {
-            manager.createSubtask(new Subtask("Title" + i, "description", TaskStatus.NEW, 10, localDateTime, manager.getEpics().get(0).getId()));
+            manager.createSubtask(new Subtask(
+                    "Title" + i,
+                    "description",
+                    TaskStatus.NEW,
+                    10,
+                    localDateTime,
+                    manager.getEpics().get(0).getId()
+            ));
         }
 
         List<Task> treeList = manager.getPrioritizedTasks();

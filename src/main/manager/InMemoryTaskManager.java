@@ -13,13 +13,13 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HistoryManager inMemoryHistoryManager =
-        Managers.getDefaultHistory();
+            Managers.getDefaultHistory();
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
 
     private final TreeSet<Task> tasksTree = new TreeSet<>(
-        CustomComparators.byStartTime()
+            CustomComparators.byStartTime()
     );
     /**
      * Уникальный Идентификатор задач.
@@ -33,7 +33,9 @@ public class InMemoryTaskManager implements TaskManager {
      * @param id   уникальный идентификатор подадачи({@link Subtask})
      */
     private static void addEpicSubtaskId(Epic epic, int id) {
-        if (Objects.isNull(epic)) return;
+        if (Objects.isNull(epic)) {
+            return;
+        }
 
         List<Integer> ids = epic.getSubtaskIds();
         ids.add(id);
@@ -48,7 +50,9 @@ public class InMemoryTaskManager implements TaskManager {
      * @param id   уникальный идентификатор подадачи({@link Subtask})
      */
     private static void deleteEpicSubtaskId(Epic epic, int id) {
-        if (Objects.isNull(epic)) return;
+        if (Objects.isNull(epic)) {
+            return;
+        }
 
         List<Integer> ids = epic.getSubtaskIds();
         ids.remove(Integer.valueOf(id));
@@ -161,7 +165,8 @@ public class InMemoryTaskManager implements TaskManager {
         try {
             addTaskToTree(task);
             tasks.put(taskId, task);
-        } catch (SameDateException ignored) {
+        }
+        catch (SameDateException ignored) {
         }
     }
 
@@ -197,7 +202,8 @@ public class InMemoryTaskManager implements TaskManager {
 
                 updateEpicStatus(epic);
                 updateEpicTimeAndDutation(epic);
-            } catch (SameDateException ignored) {
+            }
+            catch (SameDateException ignored) {
             }
         }
     }
@@ -211,7 +217,8 @@ public class InMemoryTaskManager implements TaskManager {
         try {
             addTaskToTree(task);
             tasks.put(task.getId(), task);
-        } catch (SameDateException ignored) {
+        }
+        catch (SameDateException ignored) {
         }
     }
 
@@ -238,7 +245,8 @@ public class InMemoryTaskManager implements TaskManager {
                 subtasks.put(subtask.getId(), subtask);
                 updateEpicStatus(epic);
                 updateEpicTimeAndDutation(epic);
-            } catch (SameDateException ignored) {
+            }
+            catch (SameDateException ignored) {
             }
 
         }
@@ -284,7 +292,9 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Subtask> getEpicSubtasks(Epic epic) {
         List<Subtask> epicSubtasksList = new ArrayList<>();
 
-        if (Objects.isNull(epic)) return epicSubtasksList;
+        if (Objects.isNull(epic)) {
+            return epicSubtasksList;
+        }
 
         for (int id : epic.getSubtaskIds()) {
             if (subtasks.containsKey(id)) {
@@ -297,7 +307,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpicStatus(Epic epic) {
-        if (Objects.isNull(epic)) return;
+        if (Objects.isNull(epic)) {
+            return;
+        }
 
         List<Integer> ids = epic.getSubtaskIds();
 
@@ -322,7 +334,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpicTimeAndDutation(Epic epic) {
-        if (Objects.isNull(epic)) return;
+        if (Objects.isNull(epic)) {
+            return;
+        }
 
         List<Integer> ids = epic.getSubtaskIds();
 
@@ -339,7 +353,8 @@ public class InMemoryTaskManager implements TaskManager {
 
         for (Subtask subtask : subtasksList) {
             duration += subtask.getDuration();
-            if (Objects.isNull(startTime) || (!Objects.isNull(subtask.getStartTime()) && startTime.isAfter(subtask.getStartTime()))) {
+            if (Objects.isNull(startTime) ||
+                    (!Objects.isNull(subtask.getStartTime()) && startTime.isAfter(subtask.getStartTime()))) {
                 startTime = subtask.getStartTime();
             }
         }
@@ -366,9 +381,9 @@ public class InMemoryTaskManager implements TaskManager {
      */
     private int calculateTasksCount(List<Subtask> subtaskList, TaskStatus status) {
         return (int) subtaskList.stream()
-            .filter(subtask ->
-                subtask != null && subtask.getTaskStatus()
-                    .equals(status)).count();
+                .filter(subtask ->
+                        subtask != null && subtask.getTaskStatus()
+                                .equals(status)).count();
     }
 
     /**

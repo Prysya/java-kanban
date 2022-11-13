@@ -76,9 +76,9 @@ public class HttpTaskServer {
                             String json;
 
                             if (Pattern.matches(RegExpVariables.TASK_ENTRY, path)) {
-                               json = taskHandler.getHandler();
+                                json = taskHandler.getHandler();
                             } else if (Pattern.matches(RegExpVariables.EPIC_ENTRY, path)) {
-                              json = epicHandler.getHandler();
+                                json = epicHandler.getHandler();
                             } else if (Pattern.matches(RegExpVariables.SUBTASK_ENTRY, path)) {
                                 json = subtaskHandler.getHandler();
                             } else if (Pattern.matches(RegExpVariables.EPIC_SUBTASKS_ENRTY, path)) {
@@ -126,7 +126,8 @@ public class HttpTaskServer {
                 } else {
                     throw new NotFoundException();
                 }
-            } catch (NotFoundException | BadRequestException | MethodNotAllowedException e) {
+            }
+            catch (NotFoundException | BadRequestException | MethodNotAllowedException e) {
                 httpExchange.sendResponseHeaders(e.getErrorCode(), 0);
             }
             finally {

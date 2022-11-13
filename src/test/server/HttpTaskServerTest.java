@@ -87,26 +87,44 @@ class HttpTaskServerTest {
 
     @Test
     void shouldCreateTaskByServer() throws IOException, InterruptedException {
-        HttpResponse<String> response = sendPostRequest(URI.create(TASKS_URL), gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now())));
+        HttpResponse<String> response = sendPostRequest(
+                URI.create(TASKS_URL),
+                gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now()))
+        );
         assertEquals(response.statusCode(), HttpURLConnection.HTTP_CREATED);
     }
 
     @Test
     void shouldCreateEpicByServer() throws IOException, InterruptedException {
-        HttpResponse<String> response = sendPostRequest(URI.create(EPICS_URL), gson.toJson(new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle")));
+        HttpResponse<String> response = sendPostRequest(
+                URI.create(EPICS_URL),
+                gson.toJson(new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle"))
+        );
         assertEquals(response.statusCode(), HttpURLConnection.HTTP_CREATED);
     }
 
     @Test
     void shouldCreateSubtaskByServer() throws IOException, InterruptedException {
         shouldCreateEpicByServer();
-        HttpResponse<String> response = sendPostRequest(URI.create(SUBTASKS_URL), gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now().plusHours(10), 1)));
+        HttpResponse<String> response = sendPostRequest(
+                URI.create(SUBTASKS_URL),
+                gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(),
+                        "Subtitle",
+                        TaskStatus.NEW,
+                        10,
+                        LocalDateTime.now().plusHours(10),
+                        1
+                ))
+        );
         assertEquals(response.statusCode(), HttpURLConnection.HTTP_CREATED);
     }
 
     @Test
     void shouldGetTaskByIdFromServer() throws IOException, InterruptedException {
-        sendPostRequest(URI.create(TASKS_URL), gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now())));
+        sendPostRequest(
+                URI.create(TASKS_URL),
+                gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now()))
+        );
 
         HttpResponse<String> response = sendGetRequest(URI.create(buildQueryWithId(TASKS_URL, 1)));
         JsonElement json = parseResToJson(response);
@@ -137,7 +155,16 @@ class HttpTaskServerTest {
     @Test
     void shouldGetSubtaskByIdFromServer() throws IOException, InterruptedException {
         sendPostRequest(URI.create(EPICS_URL), gson.toJson(new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle")));
-        sendPostRequest(URI.create(SUBTASKS_URL), gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now().plusHours(1), 1)));
+        sendPostRequest(
+                URI.create(SUBTASKS_URL),
+                gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(),
+                        "Subtitle",
+                        TaskStatus.NEW,
+                        10,
+                        LocalDateTime.now().plusHours(1),
+                        1
+                ))
+        );
 
         HttpResponse<String> response = sendGetRequest(URI.create(buildQueryWithId(SUBTASKS_URL, 2)));
         JsonElement json = parseResToJson(response);
@@ -154,8 +181,19 @@ class HttpTaskServerTest {
     void shouldReturnListOfTasks() throws IOException, InterruptedException {
         assertTrue(getListOfTasks(TASKS_URL, Task.class).isEmpty());
 
-        sendPostRequest(URI.create(TASKS_URL), gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now())));
-        sendPostRequest(URI.create(TASKS_URL), gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now().plusHours(1))));
+        sendPostRequest(
+                URI.create(TASKS_URL),
+                gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now()))
+        );
+        sendPostRequest(
+                URI.create(TASKS_URL),
+                gson.toJson(new Task(Endpoints.TASK.getEndpoint(),
+                        "Subtitle",
+                        TaskStatus.NEW,
+                        10,
+                        LocalDateTime.now().plusHours(1)
+                ))
+        );
         assertEquals(getListOfTasks(TASKS_URL, Task.class).size(), 2);
     }
 
@@ -173,14 +211,35 @@ class HttpTaskServerTest {
         assertTrue(getListOfTasks(SUBTASKS_URL, Subtask.class).isEmpty());
 
         sendPostRequest(URI.create(EPICS_URL), gson.toJson(new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle")));
-        sendPostRequest(URI.create(SUBTASKS_URL), gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now(), 1)));
-        sendPostRequest(URI.create(SUBTASKS_URL), gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now().plusHours(1), 1)));
+        sendPostRequest(
+                URI.create(SUBTASKS_URL),
+                gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(),
+                        "Subtitle",
+                        TaskStatus.NEW,
+                        10,
+                        LocalDateTime.now(),
+                        1
+                ))
+        );
+        sendPostRequest(
+                URI.create(SUBTASKS_URL),
+                gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(),
+                        "Subtitle",
+                        TaskStatus.NEW,
+                        10,
+                        LocalDateTime.now().plusHours(1),
+                        1
+                ))
+        );
         assertEquals(getListOfTasks(SUBTASKS_URL, Task.class).size(), 2);
     }
 
     @Test
     void shouldDeleteTask() throws IOException, InterruptedException {
-        sendPostRequest(URI.create(TASKS_URL), gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now())));
+        sendPostRequest(
+                URI.create(TASKS_URL),
+                gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now()))
+        );
         assertEquals(getListOfTasks(TASKS_URL, Task.class).size(), 1);
 
         sendDeleteRequest(URI.create(buildQueryWithId(TASKS_URL, 1)));
@@ -199,7 +258,16 @@ class HttpTaskServerTest {
     @Test
     void shouldDeleteSubtask() throws IOException, InterruptedException {
         sendPostRequest(URI.create(EPICS_URL), gson.toJson(new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle")));
-        sendPostRequest(URI.create(SUBTASKS_URL), gson.toJson(new Subtask(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now(), 1)));
+        sendPostRequest(
+                URI.create(SUBTASKS_URL),
+                gson.toJson(new Subtask(Endpoints.TASK.getEndpoint(),
+                        "Subtitle",
+                        TaskStatus.NEW,
+                        10,
+                        LocalDateTime.now(),
+                        1
+                ))
+        );
         assertEquals(getListOfTasks(SUBTASKS_URL, Subtask.class).size(), 1);
 
         sendDeleteRequest(URI.create(buildQueryWithId(SUBTASKS_URL, 2)));
@@ -210,12 +278,36 @@ class HttpTaskServerTest {
     void shouldReturnEpicSubtasksList() throws IOException, InterruptedException {
         sendPostRequest(URI.create(EPICS_URL), gson.toJson(new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle")));
 
-        assertTrue(getListOfTasks(buildQueryWithId(SUBTASKS_URL + "/" + Endpoints.EPIC.getEndpoint(), 1), Subtask.class).isEmpty());
+        assertTrue(getListOfTasks(
+                buildQueryWithId(SUBTASKS_URL + "/" + Endpoints.EPIC.getEndpoint(), 1),
+                Subtask.class
+        ).isEmpty());
 
-        sendPostRequest(URI.create(SUBTASKS_URL), gson.toJson(new Subtask(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now(), 1)));
-        sendPostRequest(URI.create(SUBTASKS_URL), gson.toJson(new Subtask(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now().plusHours(1), 1)));
+        sendPostRequest(
+                URI.create(SUBTASKS_URL),
+                gson.toJson(new Subtask(Endpoints.TASK.getEndpoint(),
+                        "Subtitle",
+                        TaskStatus.NEW,
+                        10,
+                        LocalDateTime.now(),
+                        1
+                ))
+        );
+        sendPostRequest(
+                URI.create(SUBTASKS_URL),
+                gson.toJson(new Subtask(Endpoints.TASK.getEndpoint(),
+                        "Subtitle",
+                        TaskStatus.NEW,
+                        10,
+                        LocalDateTime.now().plusHours(1),
+                        1
+                ))
+        );
 
-        assertEquals(getListOfTasks(buildQueryWithId(SUBTASKS_URL + "/" + Endpoints.EPIC.getEndpoint(), 1), Subtask.class).size(), 2);
+        assertEquals(getListOfTasks(
+                buildQueryWithId(SUBTASKS_URL + "/" + Endpoints.EPIC.getEndpoint(), 1),
+                Subtask.class
+        ).size(), 2);
     }
 
     @Test
@@ -224,7 +316,14 @@ class HttpTaskServerTest {
 
         Task task = new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now());
         Epic epic = new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle");
-        Subtask subtask = new Subtask(Endpoints.SUBTASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now().plusHours(10), 2);
+        Subtask subtask = new Subtask(
+                Endpoints.SUBTASK.getEndpoint(),
+                "Subtitle",
+                TaskStatus.NEW,
+                10,
+                LocalDateTime.now().plusHours(10),
+                2
+        );
 
         sendPostRequest(URI.create(TASKS_URL), gson.toJson(task));
         sendPostRequest(URI.create(EPICS_URL), gson.toJson(epic));
@@ -247,7 +346,14 @@ class HttpTaskServerTest {
 
         Task task = new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, timeNow);
         Epic epic = new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle");
-        Subtask subtask = new Subtask(Endpoints.SUBTASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, timePlusTenHours, 2);
+        Subtask subtask = new Subtask(
+                Endpoints.SUBTASK.getEndpoint(),
+                "Subtitle",
+                TaskStatus.NEW,
+                10,
+                timePlusTenHours,
+                2
+        );
         Subtask subtask1 = new Subtask(Endpoints.SUBTASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, null, 2);
 
         sendPostRequest(URI.create(TASKS_URL), gson.toJson(task));

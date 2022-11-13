@@ -13,14 +13,18 @@ import main.task.Subtask;
 import main.task.Task;
 import main.utils.GsonBuilders;
 import main.utils.Managers;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HTTPTaskManagerTest extends FileBackedTasksManagerTest {
     private static KVServer kvServer;
@@ -29,11 +33,6 @@ public class HTTPTaskManagerTest extends FileBackedTasksManagerTest {
     private final KVTaskClient kvTaskClient = new KVTaskClient(KV_SERVER_URL);
 
     private HTTPTaskManager taskManager;
-
-    @Override
-    HTTPTaskManager createTaskManager() {
-        return Managers.getDefault();
-    }
 
     @BeforeAll
     static void beforeAll() throws IOException {
@@ -44,6 +43,11 @@ public class HTTPTaskManagerTest extends FileBackedTasksManagerTest {
     @AfterAll
     static void afterAll() {
         kvServer.stop();
+    }
+
+    @Override
+    HTTPTaskManager createTaskManager() {
+        return Managers.getDefault();
     }
 
     @BeforeEach
@@ -105,7 +109,7 @@ public class HTTPTaskManagerTest extends FileBackedTasksManagerTest {
 
     @Test
     @Override
-    void shouldSaveHistory(){
+    void shouldSaveHistory() {
         taskManager.createTask(new Task("title", "desc", TaskStatus.NEW, 10, LocalDateTime.now()));
         taskManager.createEpic(new Epic("title", "desc"));
         taskManager.createSubtask(new Subtask("title", "desc", TaskStatus.NEW, 10, LocalDateTime.now(), 2));
@@ -124,7 +128,14 @@ public class HTTPTaskManagerTest extends FileBackedTasksManagerTest {
     void shouldRestoreFromBackup() {
         taskManager.createTask(new Task("task", "desc", TaskStatus.NEW, 10, LocalDateTime.now()));
         taskManager.createEpic(new Epic("epic", "desc"));
-        taskManager.createSubtask(new Subtask("subtask", "desc", TaskStatus.NEW, 10, LocalDateTime.now().plusHours(1), 2));
+        taskManager.createSubtask(new Subtask(
+                "subtask",
+                "desc",
+                TaskStatus.NEW,
+                10,
+                LocalDateTime.now().plusHours(1),
+                2
+        ));
         taskManager.getTaskById(1);
         taskManager.getEpicById(2);
         taskManager.getSubtaskById(3);
