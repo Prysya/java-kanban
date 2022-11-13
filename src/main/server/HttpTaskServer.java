@@ -1,29 +1,24 @@
 package main.server;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import main.enums.Endpoints;
+import main.exceptions.BadRequestException;
+import main.exceptions.MethodNotAllowedException;
+import main.exceptions.NotFoundException;
 import main.manager.HTTPTaskManager;
-import main.task.Epic;
-import main.task.Subtask;
-import main.task.Task;
-import main.utils.GsonBuilders;
-import main.utils.Managers;
-import main.utils.UrlParsers;
+import main.serverHandlers.*;
+import main.utils.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Pattern;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HttpTaskServer {
     private static final int PORT = 8080;
@@ -36,15 +31,8 @@ public class HttpTaskServer {
         server = HttpServer.create();
 
         server.bind(new InetSocketAddress(PORT), 0);
-        server.createContext("/", new TasksHandler());
+        server.createContext("/", new HttpTasksHandler());
         taskManager = Managers.getDefault();
-    }
-
-    private static void sendResponse(HttpExchange httpExchange, String text, int rCode) throws IOException {
-        byte[] resp = text.getBytes(UTF_8);
-        httpExchange.getResponseHeaders().add("Content-Type", "application/json");
-        httpExchange.sendResponseHeaders(rCode, resp.length);
-        httpExchange.getResponseBody().write(resp);
     }
 
     /**
@@ -65,269 +53,83 @@ public class HttpTaskServer {
     /**
      * Класс хендлер контекста
      */
-    class TasksHandler implements HttpHandler {
+    class HttpTasksHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange httpExchange) throws IOException {
             try {
                 String method = httpExchange.getRequestMethod();
                 String path = httpExchange.getRequestURI().getRawPath();
-                Map<String, String> queryMap = UrlParsers.queryToMap(httpExchange.getRequestURI().getRawQuery());
+                Map<String, String> queryMap = UrlHelpers.queryToMap(httpExchange.getRequestURI().getRawQuery());
+                Integer id = queryMap.containsKey("id") ? UrlHelpers.parseQueryValueToInt(queryMap.get("id")) : null;
 
-                final String tasksRegexp = "^/" + Endpoints.TASKS.getEndpoint();
+                TaskHandler taskHandler = new TaskHandler(id, gson, taskManager);
+                EpicHandler epicHandler = new EpicHandler(id, gson, taskManager);
+                SubtaskHandler subtaskHandler = new SubtaskHandler(id, gson, taskManager);
+                SubtaskEpicHandler subtaskEpicHandler = new SubtaskEpicHandler(id, gson, taskManager);
+                TasksHandler tasksHandler = new TasksHandler(gson, taskManager);
+                HistoryHandler historyHandler = new HistoryHandler(gson, taskManager);
 
                 // Проверка на вхождение в /tasks/
-                if (Pattern.matches(tasksRegexp + "/[\\w/]*", path)) {
-                    Integer id = queryMap.containsKey("id") ? UrlParsers.parseQueryValueToInt(queryMap.get("id")) : null;
-
+                if (Pattern.matches(RegExpVariables.TASKS_WITH_ADDITIONAL_URL, path)) {
                     switch (method) {
-                        case "GET": // Проверка на вхождение в /tasks/task
-                            if (Pattern.matches(tasksRegexp + "/" + Endpoints.TASK.getEndpoint() + "/?$", path)) {
-                                // Проверка на присутствие query id
-                                if (!Objects.isNull(id)) {
-                                    if (id == -1) {
-                                        httpExchange.sendResponseHeaders(403, 0);
-                                        return;
-                                    } else {
-                                        Task task = taskManager.getTaskById(id);
+                        case "GET":
+                            String json;
 
-                                        if (Objects.isNull(task)) {
-                                            httpExchange.sendResponseHeaders(404, 0);
-                                            return;
-                                        } else {
-                                            sendResponse(httpExchange, gson.toJson(task), 200);
-                                        }
-                                    }
-                                } else {
-                                    sendResponse(httpExchange, gson.toJson(taskManager.getTasks()), 200);
-                                }
+                            if (Pattern.matches(RegExpVariables.TASK_ENTRY, path)) {
+                               json = taskHandler.getHandler();
+                            } else if (Pattern.matches(RegExpVariables.EPIC_ENTRY, path)) {
+                              json = epicHandler.getHandler();
+                            } else if (Pattern.matches(RegExpVariables.SUBTASK_ENTRY, path)) {
+                                json = subtaskHandler.getHandler();
+                            } else if (Pattern.matches(RegExpVariables.EPIC_SUBTASKS_ENRTY, path)) {
+                                json = subtaskEpicHandler.getHandler();
+                            } else if (Pattern.matches(RegExpVariables.HISTORY_ENTRY, path)) {
+                                json = historyHandler.getHandler();
+                            } else {
+                                // Ответ на запрос /tasks/
+                                json = tasksHandler.getHandler();
                             }
-
-                            // Проверка на вхождение в /tasks/subtask
-                            else if (Pattern.matches(tasksRegexp + "/" + Endpoints.SUBTASK.getEndpoint() + "/?$", path)) {
-                                // Проверка на вхождение в /tasks/subtask/epic
-                                if (Pattern.matches(tasksRegexp + "/" + Endpoints.SUBTASK.getEndpoint() + "/" + Endpoints.EPIC.getEndpoint() + "/?$", path)) {
-                                    if (Objects.isNull(id) || id == -1) {
-                                        httpExchange.sendResponseHeaders(Objects.isNull(id) ? 404 : 403, 0);
-                                        return;
-                                    } else {
-                                        Epic epic = taskManager.getEpicById(id);
-
-                                        if (Objects.isNull(epic)) {
-                                            httpExchange.sendResponseHeaders(404, 0);
-                                            return;
-                                        } else {
-                                            sendResponse(httpExchange, gson.toJson(taskManager.getEpicSubtasks(epic)), 200);
-                                        }
-                                    }
-                                } else {
-                                    if (!Objects.isNull(id)) {
-                                        if (id == -1) {
-                                            httpExchange.sendResponseHeaders(403, 0);
-                                            return;
-                                        } else {
-                                            Subtask subtask = taskManager.getSubtaskById(id);
-
-                                            if (Objects.isNull(subtask)) {
-                                                httpExchange.sendResponseHeaders(404, 0);
-                                                return;
-                                            } else {
-                                                sendResponse(httpExchange, gson.toJson(subtask), 200);
-                                            }
-                                        }
-                                    } else {
-                                        sendResponse(httpExchange, gson.toJson(taskManager.getSubtasks()), 200);
-                                    }
-                                }
-                            }
-
-                            // Проверка на вхождение в /tasks/epic
-                            else if (Pattern.matches(tasksRegexp + "/" + Endpoints.EPIC.getEndpoint() + "/?$", path)) {
-                                // Проверка на присутствие query id
-                                if (!Objects.isNull(id)) {
-                                    if (id == -1) {
-                                        httpExchange.sendResponseHeaders(403, 0);
-                                        return;
-                                    } else {
-                                        Epic epic = taskManager.getEpicById(id);
-
-                                        if (Objects.isNull(epic)) {
-                                            httpExchange.sendResponseHeaders(404, 0);
-                                            return;
-                                        } else {
-                                            sendResponse(httpExchange, gson.toJson(epic), 200);
-                                        }
-                                    }
-                                } else {
-                                    sendResponse(httpExchange, gson.toJson(taskManager.getEpics()), 200);
-                                }
-                            }
-
-                            // Проверка на вхождение в /tasks/history
-                            else if (Pattern.matches(tasksRegexp + "/" + Endpoints.HISTORY.getEndpoint() + "/?$", path)) {
-                                sendResponse(httpExchange, gson.toJson(taskManager.getHistory()), 200);
-                            }
-
-                            // Ответ на запрос /tasks/
-                            else {
-                                sendResponse(httpExchange, gson.toJson(taskManager.getPrioritizedTasks()), 200);
-                            }
-                            break;
+                            ServerUtils.sendResponse(httpExchange, json, HttpURLConnection.HTTP_OK);
+                            return;
 
                         case "POST":
                             InputStream inputStream = httpExchange.getRequestBody();
                             String body = new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
 
-                            if (Pattern.matches(tasksRegexp + "/" + Endpoints.TASK.getEndpoint() + "/?$", path)) {
-                                try {
-                                    Task task = gson.fromJson(body, Task.class);
-
-                                    taskManager.createTask(task);
-
-                                    sendResponse(httpExchange, "OK", 201);
-                                } catch (JsonSyntaxException e) {
-                                    httpExchange.sendResponseHeaders(401, 0);
-                                    return;
-                                }
-                            }
-
-                            // Проверка на вхождение в /tasks/subtask
-                            else if (Pattern.matches(tasksRegexp + "/" + Endpoints.SUBTASK.getEndpoint() + "/?$", path)) {
-                                try {
-                                    Subtask subtask = gson.fromJson(body, Subtask.class);
-                                    if (Objects.isNull(subtask)) {
-                                        httpExchange.sendResponseHeaders(401, 0);
-                                        return;
-                                    }
-                                    Epic epic = taskManager.getEpicById(subtask.getParentEpicId());
-
-                                    if (Objects.isNull(epic)) {
-                                        sendResponse(httpExchange, "Эпик с таким id не найден", 403);
-                                        return;
-                                    } else {
-                                        taskManager.createSubtask(subtask);
-                                        sendResponse(httpExchange, "OK", 201);
-                                        System.out.println(epic.getSubtaskIds());
-                                    }
-
-                                } catch (JsonSyntaxException e) {
-                                    httpExchange.sendResponseHeaders(401, 0);
-                                    return;
-                                } catch (NullPointerException e) {
-                                    System.out.println(e);
-                                }
-                            }
-
-                            // Проверка на вхождение в /tasks/epic
-                            else if (Pattern.matches(tasksRegexp + "/" + Endpoints.EPIC.getEndpoint() + "/?$", path)) {
-                                try {
-                                    Epic epic = gson.fromJson(body, Epic.class);
-
-                                    taskManager.createEpic(new Epic(epic.getTitle(), epic.getDescription()));
-                                    sendResponse(httpExchange, "OK", 201);
-                                } catch (JsonSyntaxException e) {
-                                    httpExchange.sendResponseHeaders(401, 0);
-                                    return;
-                                }
+                            if (Pattern.matches(RegExpVariables.TASK_ENTRY, path)) {
+                                taskHandler.postHandler(body);
+                            } else if (Pattern.matches(RegExpVariables.EPIC_ENTRY, path)) {
+                                epicHandler.postHandler(body);
+                            } else if (Pattern.matches(RegExpVariables.SUBTASK_ENTRY, path)) {
+                                subtaskHandler.postHandler(body);
                             } else {
-                                httpExchange.sendResponseHeaders(404, 0);
-                                return;
+                                throw new NotFoundException();
                             }
-                            break;
+                            ServerUtils.sendResponse(httpExchange, "OK", HttpURLConnection.HTTP_CREATED);
+                            return;
 
                         case "DELETE":
-                            if (Pattern.matches(tasksRegexp + "/" + Endpoints.TASK.getEndpoint() + "/?$", path)) {
-                                // Проверка на присутствие query id
-                                if (!Objects.isNull(id)) {
-                                    if (id == -1) {
-                                        httpExchange.sendResponseHeaders(403, 0);
-                                        return;
-                                    } else {
-                                        Task task = taskManager.getTaskById(id);
-
-                                        if (Objects.isNull(task)) {
-                                            httpExchange.sendResponseHeaders(404, 0);
-                                            return;
-                                        } else {
-                                            taskManager.deleteTask(id);
-                                            sendResponse(httpExchange, "OK", 200);
-
-                                        }
-                                    }
-                                } else {
-                                    taskManager.deleteAllTasks();
-                                    sendResponse(httpExchange, "OK", 200);
-
-                                }
+                            if (Pattern.matches(RegExpVariables.TASK_ENTRY, path)) {
+                                taskHandler.deleteHandler();
+                            } else if (Pattern.matches(RegExpVariables.EPIC_ENTRY, path)) {
+                                epicHandler.deleteHandler();
+                            } else if (Pattern.matches(RegExpVariables.SUBTASK_ENTRY, path)) {
+                                subtaskHandler.deleteHandler();
+                            } else {
+                                throw new NotFoundException();
                             }
-
-                            // Проверка на вхождение в /tasks/subtask
-                            else if (Pattern.matches(tasksRegexp + "/" + Endpoints.SUBTASK.getEndpoint() + "/?$", path)) {
-                                // Проверка на вхождение в /tasks/subtask/epic
-                                if (!Objects.isNull(id)) {
-                                    if (id == -1) {
-                                        httpExchange.sendResponseHeaders(403, 0);
-                                        return;
-                                    } else {
-                                        Subtask subtask = taskManager.getSubtaskById(id);
-
-                                        if (Objects.isNull(subtask)) {
-                                            httpExchange.sendResponseHeaders(404, 0);
-                                            return;
-                                        } else {
-                                            taskManager.deleteSubtask(id);
-                                            sendResponse(httpExchange, "OK", 200);
-
-                                        }
-                                    }
-                                } else {
-                                    taskManager.deleteAllSubtasks();
-                                    sendResponse(httpExchange, "OK", 200);
-
-                                }
-                            }
-
-                            // Проверка на вхождение в /tasks/epic
-                            else if (Pattern.matches(tasksRegexp + "/" + Endpoints.EPIC.getEndpoint() + "/?$", path)) {
-                                // Проверка на присутствие query id
-                                if (!Objects.isNull(id)) {
-                                    if (id == -1) {
-                                        httpExchange.sendResponseHeaders(403, 0);
-                                        return;
-                                    } else {
-                                        Epic epic = taskManager.getEpicById(id);
-
-                                        if (Objects.isNull(epic)) {
-                                            httpExchange.sendResponseHeaders(404, 0);
-                                            return;
-                                        } else {
-                                            taskManager.deleteEpic(id);
-                                            sendResponse(httpExchange, "OK", 200);
-
-                                        }
-                                    }
-                                } else {
-                                    taskManager.deleteAllEpics();
-                                    sendResponse(httpExchange, "OK", 200);
-                                }
-                            }
-                            break;
-
+                            ServerUtils.sendResponse(httpExchange, "OK", HttpURLConnection.HTTP_OK);
+                            return;
                         default:
-                    }
-                }
-                // Проверка на /tasks без дополнительных параметров
-                else if (Pattern.matches(tasksRegexp + "/?$", path)) {
-                    if ("GET".equals(method)) { // Проверка на вхождение в /tasks/task
-                        sendResponse(httpExchange, gson.toJson(taskManager.getPrioritizedTasks()), 200);
-                    } else {
-                        httpExchange.sendResponseHeaders(404, 0);
+                            throw new NotFoundException();
                     }
                 } else {
-                    System.out.println(method);
-                    System.out.println(path);
-                    httpExchange.sendResponseHeaders(404, 0);
+                    throw new NotFoundException();
                 }
-            } finally {
+            } catch (NotFoundException | BadRequestException | MethodNotAllowedException e) {
+                httpExchange.sendResponseHeaders(e.getErrorCode(), 0);
+            }
+            finally {
                 httpExchange.close();
             }
         }
