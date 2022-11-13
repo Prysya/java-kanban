@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -87,20 +88,20 @@ class HttpTaskServerTest {
     @Test
     void shouldCreateTaskByServer() throws IOException, InterruptedException {
         HttpResponse<String> response = sendPostRequest(URI.create(TASKS_URL), gson.toJson(new Task(Endpoints.TASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now())));
-        assertEquals(response.statusCode(), 201);
+        assertEquals(response.statusCode(), HttpURLConnection.HTTP_CREATED);
     }
 
     @Test
     void shouldCreateEpicByServer() throws IOException, InterruptedException {
         HttpResponse<String> response = sendPostRequest(URI.create(EPICS_URL), gson.toJson(new Epic(Endpoints.EPIC.getEndpoint(), "Subtitle")));
-        assertEquals(response.statusCode(), 201);
+        assertEquals(response.statusCode(), HttpURLConnection.HTTP_CREATED);
     }
 
     @Test
     void shouldCreateSubtaskByServer() throws IOException, InterruptedException {
         shouldCreateEpicByServer();
         HttpResponse<String> response = sendPostRequest(URI.create(SUBTASKS_URL), gson.toJson(new Subtask(Endpoints.SUBTASK.getEndpoint(), "Subtitle", TaskStatus.NEW, 10, LocalDateTime.now().plusHours(10), 1)));
-        assertEquals(response.statusCode(), 201);
+        assertEquals(response.statusCode(), HttpURLConnection.HTTP_CREATED);
     }
 
     @Test
@@ -110,7 +111,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response = sendGetRequest(URI.create(buildQueryWithId(TASKS_URL, 1)));
         JsonElement json = parseResToJson(response);
 
-        assertEquals(response.statusCode(), 200);
+        assertEquals(response.statusCode(), HttpURLConnection.HTTP_OK);
 
         Task task = gson.fromJson(json, Task.class);
 
@@ -125,7 +126,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response = sendGetRequest(URI.create(buildQueryWithId(EPICS_URL, 1)));
         JsonElement json = parseResToJson(response);
 
-        assertEquals(response.statusCode(), 200);
+        assertEquals(response.statusCode(), HttpURLConnection.HTTP_OK);
 
         Epic epic = gson.fromJson(json, Epic.class);
 
@@ -141,7 +142,7 @@ class HttpTaskServerTest {
         HttpResponse<String> response = sendGetRequest(URI.create(buildQueryWithId(SUBTASKS_URL, 2)));
         JsonElement json = parseResToJson(response);
 
-        assertEquals(response.statusCode(), 200);
+        assertEquals(response.statusCode(), HttpURLConnection.HTTP_OK);
 
         Subtask subtask = gson.fromJson(json, Subtask.class);
 
