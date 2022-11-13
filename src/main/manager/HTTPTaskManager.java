@@ -2,14 +2,17 @@ package main.manager;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import main.clients.KVTaskClient;
 import main.enums.Endpoints;
+import main.enums.TaskType;
 import main.task.Epic;
 import main.task.Subtask;
 import main.task.Task;
 import main.utils.GsonBuilders;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,8 +37,7 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         String json = kvTaskClient.load(key);
         if (!Objects.isNull(json)) {
             try {
-                T[] tasks = gson.fromJson(json, type);
-                return List.of(tasks);
+                return gson.fromJson(json, TypeToken.getParameterized(ArrayList.class, type).getType());
             } catch (JsonSyntaxException ignored) {
             }
         }
@@ -44,29 +46,30 @@ public class HTTPTaskManager extends FileBackedTasksManager {
     }
 
     public void getBackup() {
-        List<Task> tasks = loadFromServer(Endpoints.TASK.getEndpoint(), Task[].class);
+        List<Task> tasks = loadFromServer(Endpoints.TASK.getEndpoint(), Task.class);
+        List<Epic> epics = loadFromServer(Endpoints.EPIC.getEndpoint(), Epic.class);
+        List<Subtask> subtasks = loadFromServer(Endpoints.SUBTASK.getEndpoint(), Subtask.class);
+        List<Task> history = loadFromServer(Endpoints.HISTORY.getEndpoint(), Task.class);
+
         if (!Objects.isNull(tasks)) {
             tasks.forEach(this::createTask);
         }
 
-        List<Epic> epics = loadFromServer(Endpoints.EPIC.getEndpoint(), Epic[].class);
         if (!Objects.isNull(epics)) {
             epics.forEach(this::createEpic);
         }
 
-        List<Subtask> subtasks = loadFromServer(Endpoints.SUBTASK.getEndpoint(), Subtask[].class);
         if (!Objects.isNull(subtasks)) {
             subtasks.forEach(this::createSubtask);
         }
 
-        List<Task> history = loadFromServer(Endpoints.HISTORY.getEndpoint(), Task[].class);
         if (!Objects.isNull(history)) {
             history.forEach(task -> {
-                if (Task.class.equals(task.getClass())) {
+                if (task.getTaskType().equals(TaskType.TASK)) {
                     this.getTaskById(task.getId());
-                } else if (Epic.class.equals(task.getClass())) {
+                } else if (task.getTaskType().equals(TaskType.EPIC)) {
                     this.getEpicById(task.getId());
-                } else if (Subtask.class.equals(task.getClass())) {
+                } else if (task.getTaskType().equals(TaskType.SUBTASK)) {
                     this.getSubtaskById(task.getId());
                 }
             });
