@@ -11,10 +11,6 @@ import java.util.Objects;
  */
 public class Subtask extends Task {
     /**
-     * Тип таска.
-     */
-    private static final TaskType TASK_TYPE = TaskType.SUBTASK;
-    /**
      * Идентификатор эпика родителя.
      */
     private Integer parentEpicId;
@@ -35,7 +31,7 @@ public class Subtask extends Task {
         LocalDateTime startTime,
         int parentEpicId
     ) {
-        super(title, description, taskStatus, duration, startTime);
+        super(TaskType.SUBTASK, title, description, taskStatus, duration, startTime);
         this.parentEpicId = parentEpicId;
     }
 
@@ -53,7 +49,7 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return getId() + ","
-            + TASK_TYPE.getStatus() + ","
+            + getTaskType().getStatus() + ","
             + getTitle() + ","
             + getTaskStatus().getStatus() + ","
             + getDescription() + ","

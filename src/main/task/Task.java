@@ -13,7 +13,7 @@ public class Task {
     /**
      * Тип таска.
      */
-    private static final TaskType TASK_TYPE = TaskType.TASK;
+    protected final TaskType taskType;
     /**
      * Уникальный идентификатор задачи.
      */
@@ -48,6 +48,16 @@ public class Task {
      * @param taskStatus  статус таска
      */
     public Task(String title, String description, TaskStatus taskStatus, int duration, LocalDateTime startTime) {
+        this.taskType = TaskType.TASK;
+        this.title = title;
+        this.description = description;
+        this.taskStatus = taskStatus;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(TaskType taskType, String title, String description, TaskStatus taskStatus, int duration, LocalDateTime startTime) {
+        this.taskType = taskType;
         this.title = title;
         this.description = description;
         this.taskStatus = taskStatus;
@@ -152,6 +162,10 @@ public class Task {
         return startTime.plusMinutes(duration);
     }
 
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -175,7 +189,7 @@ public class Task {
     @Override
     public String toString() {
         return getId() + ","
-            + TASK_TYPE.getStatus() + ","
+            + getTaskType().getStatus() + ","
             + getTitle() + ","
             + getTaskStatus().getStatus() + ","
             + getDescription() + ","

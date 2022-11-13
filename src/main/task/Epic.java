@@ -12,10 +12,6 @@ import java.util.List;
  */
 public class Epic extends Task {
     /**
-     * Тип таска.
-     */
-    private static final TaskType TASK_TYPE = TaskType.EPIC;
-    /**
      * Поле со списком уникальных идентификаторов подзадач.
      */
     private List<Integer> subtaskIds = new ArrayList<>();
@@ -29,13 +25,13 @@ public class Epic extends Task {
      * @param description описание эпика
      */
     public Epic(String title, String description) {
-        super(title, description, TaskStatus.NEW, 0, null);
+        super(TaskType.EPIC, title, description, TaskStatus.NEW, 0, null);
     }
 
     @Override
     public String toString() {
         return getId() + ","
-            + TASK_TYPE.getStatus() + ","
+            + getTaskType().getStatus() + ","
             + getTitle() + ","
             + getTaskStatus().getStatus() + ","
             + getDescription() + ","
