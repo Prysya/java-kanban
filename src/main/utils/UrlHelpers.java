@@ -1,10 +1,13 @@
 package main.utils;
 
+import main.exceptions.BadRequestException;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class UrlParsers {
-    private UrlParsers() {
+public class UrlHelpers {
+    private UrlHelpers() {
     }
 
     /**
@@ -41,5 +44,19 @@ public class UrlParsers {
             }
         }
         return result;
+    }
+
+    /**
+     * Проверяет query параметр id на null
+     *
+     * @param id query значение уникального идентификатора
+     * @return id == null
+     */
+    public static boolean checkForQueryIdParam(Integer id) throws BadRequestException {
+        if (!Objects.isNull(id) && id == -1) {
+            throw new BadRequestException();
+        }
+
+        return Objects.isNull(id);
     }
 }
